@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "bdayCountDown",
+	"webDir": "www",
+	"bundledWebRuntime": false
+}

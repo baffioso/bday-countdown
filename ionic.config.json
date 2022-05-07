@@ -1,0 +1,7 @@
+{
+  "name": "bdayCountDown",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
