@@ -1,5 +1,5 @@
 {
-  "name": "bdayCountDown",
+  "name": "bday-countdown",
   "version": "0.0.1",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
@@ -66,5 +66,5 @@
     "ts-node": "~8.3.0",
     "typescript": "~4.4.4"
   },
-  "description": "An Ionic project"
+  "description": "Countdown to b-day"
 }
