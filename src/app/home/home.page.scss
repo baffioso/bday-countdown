@@ -1,27 +1,61 @@
-#container {
-  text-align: center;
+.time-unit-selector {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  overflow-x: auto;
+  z-index: 100;
+  background-color:rgb(255 205 0);
+  height: 50px;
+  display: flex;
+  align-items: center;
 
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
+  // ion-segment-button {
+  // --backgound: var(--ion-color-danger);
+  // --background-checked: var(--ion-color-danger);
+  // --color-checked: var(--ion-color-success-contrast);
+  // --background-focused: var(--ion-color-danger);
+  // }
 }
 
-#container strong {
-  font-size: 20px;
-  line-height: 26px;
+.count-down-container {
+  height: 100%;
+  width: 100%;
+  background: url("/assets/images/pokemon.jpg") no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+
+  .counter {
+    width: 100%;
+    max-width: 600px;
+    height: 235px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    border-radius: 5px;
+
+    h1 {
+      text-align: center;
+      color: var(--ion-color-danger);
+      font-size: 24vw;
+    }
+
+    p {
+      color: var(--ion-color-primary);
+      text-align: center;
+    }
+  }
+
 }
 
-#container p {
-  font-size: 16px;
-  line-height: 22px;
-
-  color: #8c8c8c;
-
-  margin: 0;
-}
-
-#container a {
-  text-decoration: none;
+.date-picker-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
 }
