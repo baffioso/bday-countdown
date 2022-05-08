@@ -91,7 +91,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "HomePage": () => (/* binding */ HomePage)
 /* harmony export */ });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! tslib */ 4929);
-/* harmony import */ var _home_page_html_ngResource__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./home.page.html?ngResource */ 3853);
+/* harmony import */ var _home_page_html_ngResource__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./home.page.html?ngResource */ 1670);
 /* harmony import */ var _home_page_scss_ngResource__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./home.page.scss?ngResource */ 1020);
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 3184);
 /* harmony import */ var src_models_time_unit__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/models/time-unit */ 4096);
@@ -146,7 +146,7 @@ module.exports = ".count-down-container {\n  height: 100%;\n  width: 100%;\n  ba
 
 /***/ }),
 
-/***/ 3853:
+/***/ 1670:
 /*!************************************************!*\
   !*** ./src/app/home/home.page.html?ngResource ***!
   \************************************************/
