@@ -1,12 +1,18 @@
-<ion-content color="primary" [fullscreen]="true">
+<ion-content color="primary"
+             [fullscreen]="true">
 
-  <ion-fab vertical="top" horizontal="end" slot="fixed">
-    <ion-fab-button id="openModal" color="tertiary">
+  <!-- <canvas></canvas> -->
+
+  <ion-fab vertical="top"
+           horizontal="end"
+           slot="fixed">
+    <ion-fab-button id="openModal"
+                    color="tertiary">
       <ion-icon name="calendar-outline"></ion-icon>
     </ion-fab-button>
   </ion-fab>
 
-  <div class="time-unit-selector">
+  <!-- <div class="time-unit-selector">
     <ion-segment (ionChange)="onTimeUnitChanged($event)" [value]="timeUnit$ | async" mode="ios" color="primary">
       <ion-segment-button [value]="timeUnit.seconds">
         <ion-label>Sekunder</ion-label>
@@ -24,30 +30,66 @@
         <ion-label>Måneder</ion-label>
       </ion-segment-button>
     </ion-segment>
-  </div>
+  </div> -->
 
   <div class="count-down-container">
-    <div class="counter" *ngIf="dateOfBirth$ | async">
+
+    <div class="counter"
+         *ngIf="(dateOfBirth$ | async) !== null">
       <h1>{{ timeToBday$ | async }}</h1>
-      <p>{{ nextBday$ | async | date }}</p>
+
+      <ion-segment (ionChange)="onTimeUnitChanged($event)"
+                   [value]="timeUnit$ | async"
+                   mode="ios"
+                   color="primary">
+        <ion-segment-button [value]="timeUnit.seconds">
+          <ion-label>Sekunder</ion-label>
+        </ion-segment-button>
+        <ion-segment-button [value]="timeUnit.minutes">
+          <ion-label>Minutter</ion-label>
+        </ion-segment-button>
+        <ion-segment-button [value]="timeUnit.hours">
+          <ion-label>Timer</ion-label>
+        </ion-segment-button>
+        <ion-segment-button [value]="timeUnit.days">
+          <ion-label>Dage</ion-label>
+        </ion-segment-button>
+        <ion-segment-button [value]="timeUnit.months">
+          <ion-label>Måneder</ion-label>
+        </ion-segment-button>
+      </ion-segment>
+
+      <p>
+        <ion-text color="primary">
+          indtil {{ nextBday$ | async | date }}
+        </ion-text>
+      </p>
     </div>
+
+
   </div>
 
-  <ion-modal trigger="openModal" [initialBreakpoint]=".6" [breakpoints]="[0, .6]">
+  <ion-modal trigger="openModal"
+             [initialBreakpoint]=".6"
+             [breakpoints]="[0, .6]">
     <ng-template>
       <ion-header>
-        <ion-toolbar color="primary" class="ion-text-center">
+        <ion-toolbar color="danger"
+                     class="ion-text-center">
           <ion-title>
-            Din fødselsdag
+            DIN FØDSELSDAG
           </ion-title>
         </ion-toolbar>
       </ion-header>
       <ion-content>
         <div class="date-picker-container">
-          <ion-datetime color="tertiary" presentation="date" (ionChange)="onDateChanged($event)" [value]="(dateOfBirth$ | async) ? (dateOfBirth$ | async).toISOString() : null" showDefaultButtons></ion-datetime>
+          <ion-datetime color="tertiary"
+                        presentation="date"
+                        (ionChange)="onDateChanged($event)"
+                        [value]="(dateOfBirth$ | async) ? (dateOfBirth$ | async).toISOString() : null"
+                        showDefaultButtons></ion-datetime>
         </div>
       </ion-content>
     </ng-template>
   </ion-modal>
 </ion-content>
-

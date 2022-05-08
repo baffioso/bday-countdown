@@ -54,20 +54,41 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "AppComponent": () => (/* binding */ AppComponent)
 /* harmony export */ });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tslib */ 4929);
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! tslib */ 4929);
 /* harmony import */ var _app_component_html_ngResource__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./app.component.html?ngResource */ 3383);
 /* harmony import */ var _app_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./app.component.scss?ngResource */ 9259);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 3184);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/core */ 3184);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs/operators */ 9151);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs/operators */ 8759);
+/* harmony import */ var src_services_storage_service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/services/storage.service */ 7850);
+/* harmony import */ var src_services_store_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! src/services/store.service */ 9904);
+
+
+
 
 
 
 
 let AppComponent = class AppComponent {
-    constructor() { }
+    constructor(store, storage) {
+        this.store = store;
+        this.storage = storage;
+    }
+    ngOnInit() {
+        this.storage.get('bday').pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_4__.filter)(res => res.value !== null), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_5__.tap)(res => {
+            this.store.setBday(new Date(res.value));
+        })).subscribe();
+        this.storage.get('unit').pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_4__.filter)(res => res.value !== null), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_5__.tap)(res => {
+            this.store.setTimeUnit(res.value);
+        })).subscribe();
+    }
 };
-AppComponent.ctorParameters = () => [];
-AppComponent = (0,tslib__WEBPACK_IMPORTED_MODULE_2__.__decorate)([
-    (0,_angular_core__WEBPACK_IMPORTED_MODULE_3__.Component)({
+AppComponent.ctorParameters = () => [
+    { type: src_services_store_service__WEBPACK_IMPORTED_MODULE_3__.StoreService },
+    { type: src_services_storage_service__WEBPACK_IMPORTED_MODULE_2__.StorageService }
+];
+AppComponent = (0,tslib__WEBPACK_IMPORTED_MODULE_6__.__decorate)([
+    (0,_angular_core__WEBPACK_IMPORTED_MODULE_7__.Component)({
         selector: 'app-root',
         template: _app_component_html_ngResource__WEBPACK_IMPORTED_MODULE_0__,
         styles: [_app_component_scss_ngResource__WEBPACK_IMPORTED_MODULE_1__]
@@ -89,13 +110,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "AppModule": () => (/* binding */ AppModule)
 /* harmony export */ });
-/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! tslib */ 4929);
-/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 3184);
-/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/platform-browser */ 318);
-/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/router */ 2816);
-/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @ionic/angular */ 3819);
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! tslib */ 4929);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 3184);
+/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/platform-browser */ 318);
+/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/router */ 2816);
+/* harmony import */ var _ionic_angular__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @ionic/angular */ 3819);
 /* harmony import */ var _app_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./app.component */ 5041);
 /* harmony import */ var _app_routing_module__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./app-routing.module */ 158);
+/* harmony import */ var _angular_service_worker__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/service-worker */ 4933);
+/* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../environments/environment */ 2340);
+
+
 
 
 
@@ -105,12 +130,17 @@ __webpack_require__.r(__webpack_exports__);
 
 let AppModule = class AppModule {
 };
-AppModule = (0,tslib__WEBPACK_IMPORTED_MODULE_2__.__decorate)([
-    (0,_angular_core__WEBPACK_IMPORTED_MODULE_3__.NgModule)({
+AppModule = (0,tslib__WEBPACK_IMPORTED_MODULE_3__.__decorate)([
+    (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.NgModule)({
         declarations: [_app_component__WEBPACK_IMPORTED_MODULE_0__.AppComponent],
         entryComponents: [],
-        imports: [_angular_platform_browser__WEBPACK_IMPORTED_MODULE_4__.BrowserModule, _ionic_angular__WEBPACK_IMPORTED_MODULE_5__.IonicModule.forRoot(), _app_routing_module__WEBPACK_IMPORTED_MODULE_1__.AppRoutingModule],
-        providers: [{ provide: _angular_router__WEBPACK_IMPORTED_MODULE_6__.RouteReuseStrategy, useClass: _ionic_angular__WEBPACK_IMPORTED_MODULE_5__.IonicRouteStrategy }],
+        imports: [_angular_platform_browser__WEBPACK_IMPORTED_MODULE_5__.BrowserModule, _ionic_angular__WEBPACK_IMPORTED_MODULE_6__.IonicModule.forRoot(), _app_routing_module__WEBPACK_IMPORTED_MODULE_1__.AppRoutingModule, _angular_service_worker__WEBPACK_IMPORTED_MODULE_7__.ServiceWorkerModule.register('ngsw-worker.js', {
+                enabled: _environments_environment__WEBPACK_IMPORTED_MODULE_2__.environment.production,
+                // Register the ServiceWorker as soon as the application is stable
+                // or after 30 seconds (whichever comes first).
+                registrationStrategy: 'registerWhenStable:30000'
+            })],
+        providers: [{ provide: _angular_router__WEBPACK_IMPORTED_MODULE_8__.RouteReuseStrategy, useClass: _ionic_angular__WEBPACK_IMPORTED_MODULE_6__.IonicRouteStrategy }],
         bootstrap: [_app_component__WEBPACK_IMPORTED_MODULE_0__.AppComponent],
     })
 ], AppModule);
@@ -169,6 +199,175 @@ if (_environments_environment__WEBPACK_IMPORTED_MODULE_1__.environment.productio
 }
 (0,_angular_platform_browser_dynamic__WEBPACK_IMPORTED_MODULE_3__.platformBrowserDynamic)().bootstrapModule(_app_app_module__WEBPACK_IMPORTED_MODULE_0__.AppModule)
     .catch(err => console.log(err));
+
+
+/***/ }),
+
+/***/ 4096:
+/*!*********************************!*\
+  !*** ./src/models/time-unit.ts ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "TimeUnit": () => (/* binding */ TimeUnit)
+/* harmony export */ });
+var TimeUnit;
+(function (TimeUnit) {
+    TimeUnit["seconds"] = "SECONDS";
+    TimeUnit["minutes"] = "MINUTES";
+    TimeUnit["hours"] = "HOURS";
+    TimeUnit["days"] = "DAYS";
+    TimeUnit["months"] = "MONTHS";
+})(TimeUnit || (TimeUnit = {}));
+;
+
+
+/***/ }),
+
+/***/ 7850:
+/*!*****************************************!*\
+  !*** ./src/services/storage.service.ts ***!
+  \*****************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "StorageService": () => (/* binding */ StorageService)
+/* harmony export */ });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! tslib */ 4929);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/core */ 3184);
+/* harmony import */ var _capacitor_storage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @capacitor/storage */ 460);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs */ 4383);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs/operators */ 6942);
+
+
+
+
+
+let StorageService = class StorageService {
+    constructor() { }
+    set(key, value) {
+        _capacitor_storage__WEBPACK_IMPORTED_MODULE_0__.Storage.set({ key, value: JSON.stringify(value) });
+    }
+    get(key) {
+        return (0,rxjs__WEBPACK_IMPORTED_MODULE_1__.from)(_capacitor_storage__WEBPACK_IMPORTED_MODULE_0__.Storage.get({ key })).pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_2__.map)(res => ({ value: JSON.parse(res.value) })));
+    }
+};
+StorageService.ctorParameters = () => [];
+StorageService = (0,tslib__WEBPACK_IMPORTED_MODULE_3__.__decorate)([
+    (0,_angular_core__WEBPACK_IMPORTED_MODULE_4__.Injectable)({
+        providedIn: 'root'
+    })
+], StorageService);
+
+
+
+/***/ }),
+
+/***/ 9904:
+/*!***************************************!*\
+  !*** ./src/services/store.service.ts ***!
+  \***************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "StoreService": () => (/* binding */ StoreService)
+/* harmony export */ });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! tslib */ 4929);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @angular/core */ 3184);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/operators */ 6942);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs/operators */ 9151);
+/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! date-fns */ 2779);
+/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! date-fns */ 7860);
+/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! date-fns */ 371);
+/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! date-fns */ 9805);
+/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! date-fns */ 8210);
+/* harmony import */ var date_fns__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! date-fns */ 2258);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 4505);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 9193);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ 3491);
+/* harmony import */ var src_models_time_unit__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! src/models/time-unit */ 4096);
+/* harmony import */ var _storage_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./storage.service */ 7850);
+
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable @typescript-eslint/member-ordering */
+
+
+
+
+
+
+let StoreService = class StoreService {
+    constructor(storage) {
+        this.storage = storage;
+        this._dateOfBirth$ = new rxjs__WEBPACK_IMPORTED_MODULE_2__.BehaviorSubject(null);
+        this.dateOfBirth$ = this._dateOfBirth$.asObservable();
+        this._timeUnit$ = new rxjs__WEBPACK_IMPORTED_MODULE_2__.BehaviorSubject(src_models_time_unit__WEBPACK_IMPORTED_MODULE_0__.TimeUnit.days);
+        this.timeUnit$ = this._timeUnit$.asObservable();
+        this.nextBday$ = this.dateOfBirth$.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.map)(this.nextBday));
+        this.timeToBday$ = (0,rxjs__WEBPACK_IMPORTED_MODULE_4__.combineLatest)([
+            (0,rxjs__WEBPACK_IMPORTED_MODULE_5__.interval)(1000),
+            this.nextBday$,
+            this.timeUnit$
+        ]).pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.filter)(([, time, unit]) => !!time || !!unit), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.map)(([, time, unit]) => this.timeToBday(time, unit)));
+    }
+    setBday(bday) {
+        this.storage.set('bday', bday);
+        this._dateOfBirth$.next(bday);
+    }
+    setTimeUnit(unit) {
+        this.storage.set('unit', unit);
+        this._timeUnit$.next(unit);
+    }
+    nextBday(bday) {
+        const now = new Date();
+        const bdayMonth = bday.getMonth();
+        const bdayDay = bday.getDate();
+        const currentYearBday = new Date(now.getFullYear(), bdayMonth, bdayDay);
+        return currentYearBday.getTime() - now.getTime() > 0 ?
+            currentYearBday :
+            (0,date_fns__WEBPACK_IMPORTED_MODULE_7__["default"])(currentYearBday, 1);
+    }
+    timeToBday(nextBday, timeUnit) {
+        let timeToBday;
+        const now = new Date();
+        switch (timeUnit) {
+            case src_models_time_unit__WEBPACK_IMPORTED_MODULE_0__.TimeUnit.seconds:
+                timeToBday = (0,date_fns__WEBPACK_IMPORTED_MODULE_8__["default"])(nextBday, now);
+                break;
+            case src_models_time_unit__WEBPACK_IMPORTED_MODULE_0__.TimeUnit.minutes:
+                timeToBday = (0,date_fns__WEBPACK_IMPORTED_MODULE_9__["default"])(nextBday, now);
+                break;
+            case src_models_time_unit__WEBPACK_IMPORTED_MODULE_0__.TimeUnit.hours:
+                timeToBday = (0,date_fns__WEBPACK_IMPORTED_MODULE_10__["default"])(nextBday, now);
+                break;
+            case src_models_time_unit__WEBPACK_IMPORTED_MODULE_0__.TimeUnit.days:
+                timeToBday = (0,date_fns__WEBPACK_IMPORTED_MODULE_11__["default"])(nextBday, now) + 1;
+                break;
+            case src_models_time_unit__WEBPACK_IMPORTED_MODULE_0__.TimeUnit.months:
+                timeToBday = (0,date_fns__WEBPACK_IMPORTED_MODULE_12__["default"])(nextBday, now);
+                break;
+            default:
+                break;
+        }
+        return timeToBday;
+    }
+};
+StoreService.ctorParameters = () => [
+    { type: _storage_service__WEBPACK_IMPORTED_MODULE_1__.StorageService }
+];
+StoreService = (0,tslib__WEBPACK_IMPORTED_MODULE_13__.__decorate)([
+    (0,_angular_core__WEBPACK_IMPORTED_MODULE_14__.Injectable)({
+        providedIn: 'root'
+    })
+], StoreService);
+
 
 
 /***/ }),

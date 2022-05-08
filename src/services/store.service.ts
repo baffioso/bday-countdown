@@ -12,6 +12,7 @@ import {
 } from 'date-fns';
 import { BehaviorSubject, combineLatest, interval, Observable } from 'rxjs';
 import {TimeUnit} from 'src/models/time-unit';
+import { StorageService } from './storage.service';
 
 @Injectable({
   providedIn: 'root'
@@ -37,13 +38,17 @@ export class StoreService {
     map(([, time, unit]) => this.timeToBday(time, unit)),
   );
 
-  constructor() { }
+  constructor(
+    private storage: StorageService
+  ) { }
 
   setBday(bday: Date): void {
+    this.storage.set('bday', bday);
     this._dateOfBirth$.next(bday);
   }
 
   setTimeUnit(unit: TimeUnit): void {
+    this.storage.set('unit', unit);
     this._timeUnit$.next(unit);
   }
 

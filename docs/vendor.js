@@ -1,6 +1,578 @@
 "use strict";
 (self["webpackChunkapp"] = self["webpackChunkapp"] || []).push([["vendor"],{
 
+/***/ 6549:
+/*!****************************************************!*\
+  !*** ./node_modules/@capacitor/core/dist/index.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Capacitor": () => (/* binding */ Capacitor),
+/* harmony export */   "CapacitorException": () => (/* binding */ CapacitorException),
+/* harmony export */   "CapacitorPlatforms": () => (/* binding */ CapacitorPlatforms),
+/* harmony export */   "ExceptionCode": () => (/* binding */ ExceptionCode),
+/* harmony export */   "Plugins": () => (/* binding */ Plugins),
+/* harmony export */   "WebPlugin": () => (/* binding */ WebPlugin),
+/* harmony export */   "WebView": () => (/* binding */ WebView),
+/* harmony export */   "addPlatform": () => (/* binding */ addPlatform),
+/* harmony export */   "registerPlugin": () => (/* binding */ registerPlugin),
+/* harmony export */   "registerWebPlugin": () => (/* binding */ registerWebPlugin),
+/* harmony export */   "setPlatform": () => (/* binding */ setPlatform)
+/* harmony export */ });
+/* harmony import */ var _home_baffioso_Documents_git_bdayCountDown_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js */ 1670);
+
+
+/*! Capacitor: https://capacitorjs.com/ - MIT License */
+const createCapacitorPlatforms = win => {
+  const defaultPlatformMap = new Map();
+  defaultPlatformMap.set('web', {
+    name: 'web'
+  });
+  const capPlatforms = win.CapacitorPlatforms || {
+    currentPlatform: {
+      name: 'web'
+    },
+    platforms: defaultPlatformMap
+  };
+
+  const addPlatform = (name, platform) => {
+    capPlatforms.platforms.set(name, platform);
+  };
+
+  const setPlatform = name => {
+    if (capPlatforms.platforms.has(name)) {
+      capPlatforms.currentPlatform = capPlatforms.platforms.get(name);
+    }
+  };
+
+  capPlatforms.addPlatform = addPlatform;
+  capPlatforms.setPlatform = setPlatform;
+  return capPlatforms;
+};
+
+const initPlatforms = win => win.CapacitorPlatforms = createCapacitorPlatforms(win);
+/**
+ * @deprecated Set `CapacitorCustomPlatform` on the window object prior to runtime executing in the web app instead
+ */
+
+
+const CapacitorPlatforms = /*#__PURE__*/initPlatforms(typeof globalThis !== 'undefined' ? globalThis : typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : {});
+/**
+ * @deprecated Set `CapacitorCustomPlatform` on the window object prior to runtime executing in the web app instead
+ */
+
+const addPlatform = CapacitorPlatforms.addPlatform;
+/**
+ * @deprecated Set `CapacitorCustomPlatform` on the window object prior to runtime executing in the web app instead
+ */
+
+const setPlatform = CapacitorPlatforms.setPlatform;
+
+const legacyRegisterWebPlugin = (cap, webPlugin) => {
+  var _a;
+
+  const config = webPlugin.config;
+  const Plugins = cap.Plugins;
+
+  if (!config || !config.name) {
+    // TODO: add link to upgrade guide
+    throw new Error(`Capacitor WebPlugin is using the deprecated "registerWebPlugin()" function, but without the config. Please use "registerPlugin()" instead to register this web plugin."`);
+  } // TODO: add link to upgrade guide
+
+
+  console.warn(`Capacitor plugin "${config.name}" is using the deprecated "registerWebPlugin()" function`);
+
+  if (!Plugins[config.name] || ((_a = config === null || config === void 0 ? void 0 : config.platforms) === null || _a === void 0 ? void 0 : _a.includes(cap.getPlatform()))) {
+    // Add the web plugin into the plugins registry if there already isn't
+    // an existing one. If it doesn't already exist, that means
+    // there's no existing native implementation for it.
+    // - OR -
+    // If we already have a plugin registered (meaning it was defined in the native layer),
+    // then we should only overwrite it if the corresponding web plugin activates on
+    // a certain platform. For example: Geolocation uses the WebPlugin on Android but not iOS
+    Plugins[config.name] = webPlugin;
+  }
+};
+
+var ExceptionCode;
+
+(function (ExceptionCode) {
+  /**
+   * API is not implemented.
+   *
+   * This usually means the API can't be used because it is not implemented for
+   * the current platform.
+   */
+  ExceptionCode["Unimplemented"] = "UNIMPLEMENTED";
+  /**
+   * API is not available.
+   *
+   * This means the API can't be used right now because:
+   *   - it is currently missing a prerequisite, such as network connectivity
+   *   - it requires a particular platform or browser version
+   */
+
+  ExceptionCode["Unavailable"] = "UNAVAILABLE";
+})(ExceptionCode || (ExceptionCode = {}));
+
+class CapacitorException extends Error {
+  constructor(message, code) {
+    super(message);
+    this.message = message;
+    this.code = code;
+  }
+
+}
+
+const getPlatformId = win => {
+  var _a, _b;
+
+  if (win === null || win === void 0 ? void 0 : win.androidBridge) {
+    return 'android';
+  } else if ((_b = (_a = win === null || win === void 0 ? void 0 : win.webkit) === null || _a === void 0 ? void 0 : _a.messageHandlers) === null || _b === void 0 ? void 0 : _b.bridge) {
+    return 'ios';
+  } else {
+    return 'web';
+  }
+};
+
+const createCapacitor = win => {
+  var _a, _b, _c, _d, _e;
+
+  const capCustomPlatform = win.CapacitorCustomPlatform || null;
+  const cap = win.Capacitor || {};
+  const Plugins = cap.Plugins = cap.Plugins || {};
+  /**
+   * @deprecated Use `capCustomPlatform` instead, default functions like registerPlugin will function with the new object.
+   */
+
+  const capPlatforms = win.CapacitorPlatforms;
+
+  const defaultGetPlatform = () => {
+    return capCustomPlatform !== null ? capCustomPlatform.name : getPlatformId(win);
+  };
+
+  const getPlatform = ((_a = capPlatforms === null || capPlatforms === void 0 ? void 0 : capPlatforms.currentPlatform) === null || _a === void 0 ? void 0 : _a.getPlatform) || defaultGetPlatform;
+
+  const defaultIsNativePlatform = () => getPlatform() !== 'web';
+
+  const isNativePlatform = ((_b = capPlatforms === null || capPlatforms === void 0 ? void 0 : capPlatforms.currentPlatform) === null || _b === void 0 ? void 0 : _b.isNativePlatform) || defaultIsNativePlatform;
+
+  const defaultIsPluginAvailable = pluginName => {
+    const plugin = registeredPlugins.get(pluginName);
+
+    if (plugin === null || plugin === void 0 ? void 0 : plugin.platforms.has(getPlatform())) {
+      // JS implementation available for the current platform.
+      return true;
+    }
+
+    if (getPluginHeader(pluginName)) {
+      // Native implementation available.
+      return true;
+    }
+
+    return false;
+  };
+
+  const isPluginAvailable = ((_c = capPlatforms === null || capPlatforms === void 0 ? void 0 : capPlatforms.currentPlatform) === null || _c === void 0 ? void 0 : _c.isPluginAvailable) || defaultIsPluginAvailable;
+
+  const defaultGetPluginHeader = pluginName => {
+    var _a;
+
+    return (_a = cap.PluginHeaders) === null || _a === void 0 ? void 0 : _a.find(h => h.name === pluginName);
+  };
+
+  const getPluginHeader = ((_d = capPlatforms === null || capPlatforms === void 0 ? void 0 : capPlatforms.currentPlatform) === null || _d === void 0 ? void 0 : _d.getPluginHeader) || defaultGetPluginHeader;
+
+  const handleError = err => win.console.error(err);
+
+  const pluginMethodNoop = (_target, prop, pluginName) => {
+    return Promise.reject(`${pluginName} does not have an implementation of "${prop}".`);
+  };
+
+  const registeredPlugins = new Map();
+
+  const defaultRegisterPlugin = (pluginName, jsImplementations = {}) => {
+    const registeredPlugin = registeredPlugins.get(pluginName);
+
+    if (registeredPlugin) {
+      console.warn(`Capacitor plugin "${pluginName}" already registered. Cannot register plugins twice.`);
+      return registeredPlugin.proxy;
+    }
+
+    const platform = getPlatform();
+    const pluginHeader = getPluginHeader(pluginName);
+    let jsImplementation;
+
+    const loadPluginImplementation = /*#__PURE__*/function () {
+      var _ref = (0,_home_baffioso_Documents_git_bdayCountDown_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+        if (!jsImplementation && platform in jsImplementations) {
+          jsImplementation = typeof jsImplementations[platform] === 'function' ? jsImplementation = yield jsImplementations[platform]() : jsImplementation = jsImplementations[platform];
+        } else if (capCustomPlatform !== null && !jsImplementation && 'web' in jsImplementations) {
+          jsImplementation = typeof jsImplementations['web'] === 'function' ? jsImplementation = yield jsImplementations['web']() : jsImplementation = jsImplementations['web'];
+        }
+
+        return jsImplementation;
+      });
+
+      return function loadPluginImplementation() {
+        return _ref.apply(this, arguments);
+      };
+    }();
+
+    const createPluginMethod = (impl, prop) => {
+      var _a, _b;
+
+      if (pluginHeader) {
+        const methodHeader = pluginHeader === null || pluginHeader === void 0 ? void 0 : pluginHeader.methods.find(m => prop === m.name);
+
+        if (methodHeader) {
+          if (methodHeader.rtype === 'promise') {
+            return options => cap.nativePromise(pluginName, prop.toString(), options);
+          } else {
+            return (options, callback) => cap.nativeCallback(pluginName, prop.toString(), options, callback);
+          }
+        } else if (impl) {
+          return (_a = impl[prop]) === null || _a === void 0 ? void 0 : _a.bind(impl);
+        }
+      } else if (impl) {
+        return (_b = impl[prop]) === null || _b === void 0 ? void 0 : _b.bind(impl);
+      } else {
+        throw new CapacitorException(`"${pluginName}" plugin is not implemented on ${platform}`, ExceptionCode.Unimplemented);
+      }
+    };
+
+    const createPluginMethodWrapper = prop => {
+      let remove;
+
+      const wrapper = (...args) => {
+        const p = loadPluginImplementation().then(impl => {
+          const fn = createPluginMethod(impl, prop);
+
+          if (fn) {
+            const p = fn(...args);
+            remove = p === null || p === void 0 ? void 0 : p.remove;
+            return p;
+          } else {
+            throw new CapacitorException(`"${pluginName}.${prop}()" is not implemented on ${platform}`, ExceptionCode.Unimplemented);
+          }
+        });
+
+        if (prop === 'addListener') {
+          p.remove = /*#__PURE__*/(0,_home_baffioso_Documents_git_bdayCountDown_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+            return remove();
+          });
+        }
+
+        return p;
+      }; // Some flair ✨
+
+
+      wrapper.toString = () => `${prop.toString()}() { [capacitor code] }`;
+
+      Object.defineProperty(wrapper, 'name', {
+        value: prop,
+        writable: false,
+        configurable: false
+      });
+      return wrapper;
+    };
+
+    const addListener = createPluginMethodWrapper('addListener');
+    const removeListener = createPluginMethodWrapper('removeListener');
+
+    const addListenerNative = (eventName, callback) => {
+      const call = addListener({
+        eventName
+      }, callback);
+
+      const remove = /*#__PURE__*/function () {
+        var _ref3 = (0,_home_baffioso_Documents_git_bdayCountDown_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+          const callbackId = yield call;
+          removeListener({
+            eventName,
+            callbackId
+          }, callback);
+        });
+
+        return function remove() {
+          return _ref3.apply(this, arguments);
+        };
+      }();
+
+      const p = new Promise(resolve => call.then(() => resolve({
+        remove
+      })));
+      p.remove = /*#__PURE__*/(0,_home_baffioso_Documents_git_bdayCountDown_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+        console.warn(`Using addListener() without 'await' is deprecated.`);
+        yield remove();
+      });
+      return p;
+    };
+
+    const proxy = new Proxy({}, {
+      get(_, prop) {
+        switch (prop) {
+          // https://github.com/facebook/react/issues/20030
+          case '$$typeof':
+            return undefined;
+
+          case 'toJSON':
+            return () => ({});
+
+          case 'addListener':
+            return pluginHeader ? addListenerNative : addListener;
+
+          case 'removeListener':
+            return removeListener;
+
+          default:
+            return createPluginMethodWrapper(prop);
+        }
+      }
+
+    });
+    Plugins[pluginName] = proxy;
+    registeredPlugins.set(pluginName, {
+      name: pluginName,
+      proxy,
+      platforms: new Set([...Object.keys(jsImplementations), ...(pluginHeader ? [platform] : [])])
+    });
+    return proxy;
+  };
+
+  const registerPlugin = ((_e = capPlatforms === null || capPlatforms === void 0 ? void 0 : capPlatforms.currentPlatform) === null || _e === void 0 ? void 0 : _e.registerPlugin) || defaultRegisterPlugin; // Add in convertFileSrc for web, it will already be available in native context
+
+  if (!cap.convertFileSrc) {
+    cap.convertFileSrc = filePath => filePath;
+  }
+
+  cap.getPlatform = getPlatform;
+  cap.handleError = handleError;
+  cap.isNativePlatform = isNativePlatform;
+  cap.isPluginAvailable = isPluginAvailable;
+  cap.pluginMethodNoop = pluginMethodNoop;
+  cap.registerPlugin = registerPlugin;
+  cap.Exception = CapacitorException;
+  cap.DEBUG = !!cap.DEBUG;
+  cap.isLoggingEnabled = !!cap.isLoggingEnabled; // Deprecated props
+
+  cap.platform = cap.getPlatform();
+  cap.isNative = cap.isNativePlatform();
+  return cap;
+};
+
+const initCapacitorGlobal = win => win.Capacitor = createCapacitor(win);
+
+const Capacitor = /*#__PURE__*/initCapacitorGlobal(typeof globalThis !== 'undefined' ? globalThis : typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : {});
+const registerPlugin = Capacitor.registerPlugin;
+/**
+ * @deprecated Provided for backwards compatibility for Capacitor v2 plugins.
+ * Capacitor v3 plugins should import the plugin directly. This "Plugins"
+ * export is deprecated in v3, and will be removed in v4.
+ */
+
+const Plugins = Capacitor.Plugins;
+/**
+ * Provided for backwards compatibility. Use the registerPlugin() API
+ * instead, and provide the web plugin as the "web" implmenetation.
+ * For example
+ *
+ * export const Example = registerPlugin('Example', {
+ *   web: () => import('./web').then(m => new m.Example())
+ * })
+ *
+ * @deprecated Deprecated in v3, will be removed from v4.
+ */
+
+const registerWebPlugin = plugin => legacyRegisterWebPlugin(Capacitor, plugin);
+/**
+ * Base class web plugins should extend.
+ */
+
+
+class WebPlugin {
+  constructor(config) {
+    this.listeners = {};
+    this.windowListeners = {};
+
+    if (config) {
+      // TODO: add link to upgrade guide
+      console.warn(`Capacitor WebPlugin "${config.name}" config object was deprecated in v3 and will be removed in v4.`);
+      this.config = config;
+    }
+  }
+
+  addListener(eventName, listenerFunc) {
+    var _this = this;
+
+    const listeners = this.listeners[eventName];
+
+    if (!listeners) {
+      this.listeners[eventName] = [];
+    }
+
+    this.listeners[eventName].push(listenerFunc); // If we haven't added a window listener for this event and it requires one,
+    // go ahead and add it
+
+    const windowListener = this.windowListeners[eventName];
+
+    if (windowListener && !windowListener.registered) {
+      this.addWindowListener(windowListener);
+    }
+
+    const remove = /*#__PURE__*/function () {
+      var _ref5 = (0,_home_baffioso_Documents_git_bdayCountDown_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+        return _this.removeListener(eventName, listenerFunc);
+      });
+
+      return function remove() {
+        return _ref5.apply(this, arguments);
+      };
+    }();
+
+    const p = Promise.resolve({
+      remove
+    });
+    Object.defineProperty(p, 'remove', {
+      value: function () {
+        var _ref6 = (0,_home_baffioso_Documents_git_bdayCountDown_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+          console.warn(`Using addListener() without 'await' is deprecated.`);
+          yield remove();
+        });
+
+        return function value() {
+          return _ref6.apply(this, arguments);
+        };
+      }()
+    });
+    return p;
+  }
+
+  removeAllListeners() {
+    var _this2 = this;
+
+    return (0,_home_baffioso_Documents_git_bdayCountDown_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      _this2.listeners = {};
+
+      for (const listener in _this2.windowListeners) {
+        _this2.removeWindowListener(_this2.windowListeners[listener]);
+      }
+
+      _this2.windowListeners = {};
+    })();
+  }
+
+  notifyListeners(eventName, data) {
+    const listeners = this.listeners[eventName];
+
+    if (listeners) {
+      listeners.forEach(listener => listener(data));
+    }
+  }
+
+  hasListeners(eventName) {
+    return !!this.listeners[eventName].length;
+  }
+
+  registerWindowListener(windowEventName, pluginEventName) {
+    this.windowListeners[pluginEventName] = {
+      registered: false,
+      windowEventName,
+      pluginEventName,
+      handler: event => {
+        this.notifyListeners(pluginEventName, event);
+      }
+    };
+  }
+
+  unimplemented(msg = 'not implemented') {
+    return new Capacitor.Exception(msg, ExceptionCode.Unimplemented);
+  }
+
+  unavailable(msg = 'not available') {
+    return new Capacitor.Exception(msg, ExceptionCode.Unavailable);
+  }
+
+  removeListener(eventName, listenerFunc) {
+    var _this3 = this;
+
+    return (0,_home_baffioso_Documents_git_bdayCountDown_node_modules_babel_runtime_helpers_esm_asyncToGenerator_js__WEBPACK_IMPORTED_MODULE_0__["default"])(function* () {
+      const listeners = _this3.listeners[eventName];
+
+      if (!listeners) {
+        return;
+      }
+
+      const index = listeners.indexOf(listenerFunc);
+
+      _this3.listeners[eventName].splice(index, 1); // If there are no more listeners for this type of event,
+      // remove the window listener
+
+
+      if (!_this3.listeners[eventName].length) {
+        _this3.removeWindowListener(_this3.windowListeners[eventName]);
+      }
+    })();
+  }
+
+  addWindowListener(handle) {
+    window.addEventListener(handle.windowEventName, handle.handler);
+    handle.registered = true;
+  }
+
+  removeWindowListener(handle) {
+    if (!handle) {
+      return;
+    }
+
+    window.removeEventListener(handle.windowEventName, handle.handler);
+    handle.registered = false;
+  }
+
+}
+
+const WebView = /*#__PURE__*/registerPlugin('WebView');
+
+
+/***/ }),
+
+/***/ 7394:
+/*!*****************************************************************!*\
+  !*** ./node_modules/@capacitor/storage/dist/esm/definitions.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+
+
+
+/***/ }),
+
+/***/ 460:
+/*!***********************************************************!*\
+  !*** ./node_modules/@capacitor/storage/dist/esm/index.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Storage": () => (/* binding */ Storage)
+/* harmony export */ });
+/* harmony import */ var _capacitor_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @capacitor/core */ 6549);
+/* harmony import */ var _definitions__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./definitions */ 7394);
+
+const Storage = (0,_capacitor_core__WEBPACK_IMPORTED_MODULE_0__.registerPlugin)('Storage', {
+    web: () => __webpack_require__.e(/*! import() */ "node_modules_capacitor_storage_dist_esm_web_js").then(__webpack_require__.bind(__webpack_require__, /*! ./web */ 9970)).then(m => new m.StorageWeb()),
+});
+
+
+
+
+/***/ }),
+
 /***/ 3819:
 /*!***************************************************************!*\
   !*** ./node_modules/@ionic/angular/fesm2015/ionic-angular.js ***!
@@ -16727,6 +17299,1217 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ 6610:
+/*!*********************************************************************************!*\
+  !*** ./node_modules/date-fns/esm/_lib/getTimezoneOffsetInMilliseconds/index.js ***!
+  \*********************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ getTimezoneOffsetInMilliseconds)
+/* harmony export */ });
+/**
+ * Google Chrome as of 67.0.3396.87 introduced timezones with offset that includes seconds.
+ * They usually appear for dates that denote time before the timezones were introduced
+ * (e.g. for 'Europe/Prague' timezone the offset is GMT+00:57:44 before 1 October 1891
+ * and GMT+01:00:00 after that date)
+ *
+ * Date#getTimezoneOffset returns the offset in minutes and would return 57 for the example above,
+ * which would lead to incorrect calculations.
+ *
+ * This function returns the timezone offset in milliseconds that takes seconds in account.
+ */
+function getTimezoneOffsetInMilliseconds(date) {
+  var utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds()));
+  utcDate.setUTCFullYear(date.getFullYear());
+  return date.getTime() - utcDate.getTime();
+}
+
+/***/ }),
+
+/***/ 1170:
+/*!**************************************************************!*\
+  !*** ./node_modules/date-fns/esm/_lib/requiredArgs/index.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ requiredArgs)
+/* harmony export */ });
+function requiredArgs(required, args) {
+  if (args.length < required) {
+    throw new TypeError(required + ' argument' + (required > 1 ? 's' : '') + ' required, but only ' + args.length + ' present');
+  }
+}
+
+/***/ }),
+
+/***/ 967:
+/*!*****************************************************************!*\
+  !*** ./node_modules/date-fns/esm/_lib/roundingMethods/index.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "getRoundingMethod": () => (/* binding */ getRoundingMethod)
+/* harmony export */ });
+var roundingMap = {
+  ceil: Math.ceil,
+  round: Math.round,
+  floor: Math.floor,
+  trunc: function (value) {
+    return value < 0 ? Math.ceil(value) : Math.floor(value);
+  } // Math.trunc is not supported by IE
+
+};
+var defaultRoundingMethod = 'trunc';
+function getRoundingMethod(method) {
+  return method ? roundingMap[method] : roundingMap[defaultRoundingMethod];
+}
+
+/***/ }),
+
+/***/ 7367:
+/*!***********************************************************!*\
+  !*** ./node_modules/date-fns/esm/_lib/toInteger/index.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ toInteger)
+/* harmony export */ });
+function toInteger(dirtyNumber) {
+  if (dirtyNumber === null || dirtyNumber === true || dirtyNumber === false) {
+    return NaN;
+  }
+
+  var number = Number(dirtyNumber);
+
+  if (isNaN(number)) {
+    return number;
+  }
+
+  return number < 0 ? Math.ceil(number) : Math.floor(number);
+}
+
+/***/ }),
+
+/***/ 8053:
+/*!******************************************************!*\
+  !*** ./node_modules/date-fns/esm/addMonths/index.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ addMonths)
+/* harmony export */ });
+/* harmony import */ var _lib_toInteger_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../_lib/toInteger/index.js */ 7367);
+/* harmony import */ var _toDate_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../toDate/index.js */ 8325);
+/* harmony import */ var _lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_lib/requiredArgs/index.js */ 1170);
+
+
+
+/**
+ * @name addMonths
+ * @category Month Helpers
+ * @summary Add the specified number of months to the given date.
+ *
+ * @description
+ * Add the specified number of months to the given date.
+ *
+ * ### v2.0.0 breaking changes:
+ *
+ * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
+ *
+ * @param {Date|Number} date - the date to be changed
+ * @param {Number} amount - the amount of months to be added. Positive decimals will be rounded using `Math.floor`, decimals less than zero will be rounded using `Math.ceil`.
+ * @returns {Date} the new date with the months added
+ * @throws {TypeError} 2 arguments required
+ *
+ * @example
+ * // Add 5 months to 1 September 2014:
+ * const result = addMonths(new Date(2014, 8, 1), 5)
+ * //=> Sun Feb 01 2015 00:00:00
+ */
+
+function addMonths(dirtyDate, dirtyAmount) {
+  (0,_lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(2, arguments);
+  var date = (0,_toDate_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dirtyDate);
+  var amount = (0,_lib_toInteger_index_js__WEBPACK_IMPORTED_MODULE_2__["default"])(dirtyAmount);
+
+  if (isNaN(amount)) {
+    return new Date(NaN);
+  }
+
+  if (!amount) {
+    // If 0 months, no-op to avoid changing times in the hour before end of DST
+    return date;
+  }
+
+  var dayOfMonth = date.getDate(); // The JS Date object supports date math by accepting out-of-bounds values for
+  // month, day, etc. For example, new Date(2020, 0, 0) returns 31 Dec 2019 and
+  // new Date(2020, 13, 1) returns 1 Feb 2021.  This is *almost* the behavior we
+  // want except that dates will wrap around the end of a month, meaning that
+  // new Date(2020, 13, 31) will return 3 Mar 2021 not 28 Feb 2021 as desired. So
+  // we'll default to the end of the desired month by adding 1 to the desired
+  // month and using a date of 0 to back up one day to the end of the desired
+  // month.
+
+  var endOfDesiredMonth = new Date(date.getTime());
+  endOfDesiredMonth.setMonth(date.getMonth() + amount + 1, 0);
+  var daysInMonth = endOfDesiredMonth.getDate();
+
+  if (dayOfMonth >= daysInMonth) {
+    // If we're already at the end of the month, then this is the correct date
+    // and we're done.
+    return endOfDesiredMonth;
+  } else {
+    // Otherwise, we now know that setting the original day-of-month value won't
+    // cause an overflow, so set the desired day-of-month. Note that we can't
+    // just set the date of `endOfDesiredMonth` because that object may have had
+    // its time changed in the unusual case where where a DST transition was on
+    // the last day of the month and its local time was in the hour skipped or
+    // repeated next to a DST transition.  So we use `date` instead which is
+    // guaranteed to still have the original time.
+    date.setFullYear(endOfDesiredMonth.getFullYear(), endOfDesiredMonth.getMonth(), dayOfMonth);
+    return date;
+  }
+}
+
+/***/ }),
+
+/***/ 2779:
+/*!*****************************************************!*\
+  !*** ./node_modules/date-fns/esm/addYears/index.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ addYears)
+/* harmony export */ });
+/* harmony import */ var _lib_toInteger_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../_lib/toInteger/index.js */ 7367);
+/* harmony import */ var _addMonths_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../addMonths/index.js */ 8053);
+/* harmony import */ var _lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_lib/requiredArgs/index.js */ 1170);
+
+
+
+/**
+ * @name addYears
+ * @category Year Helpers
+ * @summary Add the specified number of years to the given date.
+ *
+ * @description
+ * Add the specified number of years to the given date.
+ *
+ * ### v2.0.0 breaking changes:
+ *
+ * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
+ *
+ * @param {Date|Number} date - the date to be changed
+ * @param {Number} amount - the amount of years to be added. Positive decimals will be rounded using `Math.floor`, decimals less than zero will be rounded using `Math.ceil`.
+ * @returns {Date} the new date with the years added
+ * @throws {TypeError} 2 arguments required
+ *
+ * @example
+ * // Add 5 years to 1 September 2014:
+ * const result = addYears(new Date(2014, 8, 1), 5)
+ * //=> Sun Sep 01 2019 00:00:00
+ */
+
+function addYears(dirtyDate, dirtyAmount) {
+  (0,_lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(2, arguments);
+  var amount = (0,_lib_toInteger_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dirtyAmount);
+  return (0,_addMonths_index_js__WEBPACK_IMPORTED_MODULE_2__["default"])(dirtyDate, amount * 12);
+}
+
+/***/ }),
+
+/***/ 6579:
+/*!*******************************************************!*\
+  !*** ./node_modules/date-fns/esm/compareAsc/index.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ compareAsc)
+/* harmony export */ });
+/* harmony import */ var _toDate_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../toDate/index.js */ 8325);
+/* harmony import */ var _lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_lib/requiredArgs/index.js */ 1170);
+
+
+/**
+ * @name compareAsc
+ * @category Common Helpers
+ * @summary Compare the two dates and return -1, 0 or 1.
+ *
+ * @description
+ * Compare the two dates and return 1 if the first date is after the second,
+ * -1 if the first date is before the second or 0 if dates are equal.
+ *
+ * ### v2.0.0 breaking changes:
+ *
+ * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
+ *
+ * @param {Date|Number} dateLeft - the first date to compare
+ * @param {Date|Number} dateRight - the second date to compare
+ * @returns {Number} the result of the comparison
+ * @throws {TypeError} 2 arguments required
+ *
+ * @example
+ * // Compare 11 February 1987 and 10 July 1989:
+ * const result = compareAsc(new Date(1987, 1, 11), new Date(1989, 6, 10))
+ * //=> -1
+ *
+ * @example
+ * // Sort the array of dates:
+ * const result = [
+ *   new Date(1995, 6, 2),
+ *   new Date(1987, 1, 11),
+ *   new Date(1989, 6, 10)
+ * ].sort(compareAsc)
+ * //=> [
+ * //   Wed Feb 11 1987 00:00:00,
+ * //   Mon Jul 10 1989 00:00:00,
+ * //   Sun Jul 02 1995 00:00:00
+ * // ]
+ */
+
+function compareAsc(dirtyDateLeft, dirtyDateRight) {
+  (0,_lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(2, arguments);
+  var dateLeft = (0,_toDate_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dirtyDateLeft);
+  var dateRight = (0,_toDate_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dirtyDateRight);
+  var diff = dateLeft.getTime() - dateRight.getTime();
+
+  if (diff < 0) {
+    return -1;
+  } else if (diff > 0) {
+    return 1; // Return 0 if diff is 0; return NaN if diff is NaN
+  } else {
+    return diff;
+  }
+}
+
+/***/ }),
+
+/***/ 677:
+/*!******************************************************!*\
+  !*** ./node_modules/date-fns/esm/constants/index.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "daysInWeek": () => (/* binding */ daysInWeek),
+/* harmony export */   "maxTime": () => (/* binding */ maxTime),
+/* harmony export */   "millisecondsInMinute": () => (/* binding */ millisecondsInMinute),
+/* harmony export */   "millisecondsInHour": () => (/* binding */ millisecondsInHour),
+/* harmony export */   "millisecondsInSecond": () => (/* binding */ millisecondsInSecond),
+/* harmony export */   "minTime": () => (/* binding */ minTime),
+/* harmony export */   "minutesInHour": () => (/* binding */ minutesInHour),
+/* harmony export */   "monthsInQuarter": () => (/* binding */ monthsInQuarter),
+/* harmony export */   "monthsInYear": () => (/* binding */ monthsInYear),
+/* harmony export */   "quartersInYear": () => (/* binding */ quartersInYear),
+/* harmony export */   "secondsInHour": () => (/* binding */ secondsInHour),
+/* harmony export */   "secondsInMinute": () => (/* binding */ secondsInMinute)
+/* harmony export */ });
+/**
+ * Days in 1 week.
+ *
+ * @name daysInWeek
+ * @constant
+ * @type {number}
+ * @default
+ */
+var daysInWeek = 7;
+/**
+ * Maximum allowed time.
+ *
+ * @name maxTime
+ * @constant
+ * @type {number}
+ * @default
+ */
+
+var maxTime = Math.pow(10, 8) * 24 * 60 * 60 * 1000;
+/**
+ * Milliseconds in 1 minute
+ *
+ * @name millisecondsInMinute
+ * @constant
+ * @type {number}
+ * @default
+ */
+
+var millisecondsInMinute = 60000;
+/**
+ * Milliseconds in 1 hour
+ *
+ * @name millisecondsInHour
+ * @constant
+ * @type {number}
+ * @default
+ */
+
+var millisecondsInHour = 3600000;
+/**
+ * Milliseconds in 1 second
+ *
+ * @name millisecondsInSecond
+ * @constant
+ * @type {number}
+ * @default
+ */
+
+var millisecondsInSecond = 1000;
+/**
+ * Minimum allowed time.
+ *
+ * @name minTime
+ * @constant
+ * @type {number}
+ * @default
+ */
+
+var minTime = -maxTime;
+/**
+ * Minutes in 1 hour
+ *
+ * @name minutesInHour
+ * @constant
+ * @type {number}
+ * @default
+ */
+
+var minutesInHour = 60;
+/**
+ * Months in 1 quarter
+ *
+ * @name monthsInQuarter
+ * @constant
+ * @type {number}
+ * @default
+ */
+
+var monthsInQuarter = 3;
+/**
+ * Months in 1 year
+ *
+ * @name monthsInYear
+ * @constant
+ * @type {number}
+ * @default
+ */
+
+var monthsInYear = 12;
+/**
+ * Quarters in 1 year
+ *
+ * @name quartersInYear
+ * @constant
+ * @type {number}
+ * @default
+ */
+
+var quartersInYear = 4;
+/**
+ * Seconds in 1 hour
+ *
+ * @name secondsInHour
+ * @constant
+ * @type {number}
+ * @default
+ */
+
+var secondsInHour = 3600;
+/**
+ * Seconds in 1 minute
+ *
+ * @name secondsInMinute
+ * @constant
+ * @type {number}
+ * @default
+ */
+
+var secondsInMinute = 60;
+
+/***/ }),
+
+/***/ 6323:
+/*!*********************************************************************!*\
+  !*** ./node_modules/date-fns/esm/differenceInCalendarDays/index.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ differenceInCalendarDays)
+/* harmony export */ });
+/* harmony import */ var _lib_getTimezoneOffsetInMilliseconds_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../_lib/getTimezoneOffsetInMilliseconds/index.js */ 6610);
+/* harmony import */ var _startOfDay_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../startOfDay/index.js */ 9377);
+/* harmony import */ var _lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_lib/requiredArgs/index.js */ 1170);
+
+
+
+var MILLISECONDS_IN_DAY = 86400000;
+/**
+ * @name differenceInCalendarDays
+ * @category Day Helpers
+ * @summary Get the number of calendar days between the given dates.
+ *
+ * @description
+ * Get the number of calendar days between the given dates. This means that the times are removed
+ * from the dates and then the difference in days is calculated.
+ *
+ * ### v2.0.0 breaking changes:
+ *
+ * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
+ *
+ * @param {Date|Number} dateLeft - the later date
+ * @param {Date|Number} dateRight - the earlier date
+ * @returns {Number} the number of calendar days
+ * @throws {TypeError} 2 arguments required
+ *
+ * @example
+ * // How many calendar days are between
+ * // 2 July 2011 23:00:00 and 2 July 2012 00:00:00?
+ * const result = differenceInCalendarDays(
+ *   new Date(2012, 6, 2, 0, 0),
+ *   new Date(2011, 6, 2, 23, 0)
+ * )
+ * //=> 366
+ * // How many calendar days are between
+ * // 2 July 2011 23:59:00 and 3 July 2011 00:01:00?
+ * const result = differenceInCalendarDays(
+ *   new Date(2011, 6, 3, 0, 1),
+ *   new Date(2011, 6, 2, 23, 59)
+ * )
+ * //=> 1
+ */
+
+function differenceInCalendarDays(dirtyDateLeft, dirtyDateRight) {
+  (0,_lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(2, arguments);
+  var startOfDayLeft = (0,_startOfDay_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dirtyDateLeft);
+  var startOfDayRight = (0,_startOfDay_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dirtyDateRight);
+  var timestampLeft = startOfDayLeft.getTime() - (0,_lib_getTimezoneOffsetInMilliseconds_index_js__WEBPACK_IMPORTED_MODULE_2__["default"])(startOfDayLeft);
+  var timestampRight = startOfDayRight.getTime() - (0,_lib_getTimezoneOffsetInMilliseconds_index_js__WEBPACK_IMPORTED_MODULE_2__["default"])(startOfDayRight); // Round the number of days to the nearest integer
+  // because the number of milliseconds in a day is not constant
+  // (e.g. it's different in the day of the daylight saving time clock shift)
+
+  return Math.round((timestampLeft - timestampRight) / MILLISECONDS_IN_DAY);
+}
+
+/***/ }),
+
+/***/ 9480:
+/*!***********************************************************************!*\
+  !*** ./node_modules/date-fns/esm/differenceInCalendarMonths/index.js ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ differenceInCalendarMonths)
+/* harmony export */ });
+/* harmony import */ var _toDate_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../toDate/index.js */ 8325);
+/* harmony import */ var _lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_lib/requiredArgs/index.js */ 1170);
+
+
+/**
+ * @name differenceInCalendarMonths
+ * @category Month Helpers
+ * @summary Get the number of calendar months between the given dates.
+ *
+ * @description
+ * Get the number of calendar months between the given dates.
+ *
+ * ### v2.0.0 breaking changes:
+ *
+ * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
+ *
+ * @param {Date|Number} dateLeft - the later date
+ * @param {Date|Number} dateRight - the earlier date
+ * @returns {Number} the number of calendar months
+ * @throws {TypeError} 2 arguments required
+ *
+ * @example
+ * // How many calendar months are between 31 January 2014 and 1 September 2014?
+ * var result = differenceInCalendarMonths(
+ *   new Date(2014, 8, 1),
+ *   new Date(2014, 0, 31)
+ * )
+ * //=> 8
+ */
+
+function differenceInCalendarMonths(dirtyDateLeft, dirtyDateRight) {
+  (0,_lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(2, arguments);
+  var dateLeft = (0,_toDate_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dirtyDateLeft);
+  var dateRight = (0,_toDate_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dirtyDateRight);
+  var yearDiff = dateLeft.getFullYear() - dateRight.getFullYear();
+  var monthDiff = dateLeft.getMonth() - dateRight.getMonth();
+  return yearDiff * 12 + monthDiff;
+}
+
+/***/ }),
+
+/***/ 8210:
+/*!*************************************************************!*\
+  !*** ./node_modules/date-fns/esm/differenceInDays/index.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ differenceInDays)
+/* harmony export */ });
+/* harmony import */ var _toDate_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../toDate/index.js */ 8325);
+/* harmony import */ var _differenceInCalendarDays_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../differenceInCalendarDays/index.js */ 6323);
+/* harmony import */ var _lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_lib/requiredArgs/index.js */ 1170);
+
+
+ // Like `compareAsc` but uses local time not UTC, which is needed
+// for accurate equality comparisons of UTC timestamps that end up
+// having the same representation in local time, e.g. one hour before
+// DST ends vs. the instant that DST ends.
+
+function compareLocalAsc(dateLeft, dateRight) {
+  var diff = dateLeft.getFullYear() - dateRight.getFullYear() || dateLeft.getMonth() - dateRight.getMonth() || dateLeft.getDate() - dateRight.getDate() || dateLeft.getHours() - dateRight.getHours() || dateLeft.getMinutes() - dateRight.getMinutes() || dateLeft.getSeconds() - dateRight.getSeconds() || dateLeft.getMilliseconds() - dateRight.getMilliseconds();
+
+  if (diff < 0) {
+    return -1;
+  } else if (diff > 0) {
+    return 1; // Return 0 if diff is 0; return NaN if diff is NaN
+  } else {
+    return diff;
+  }
+}
+/**
+ * @name differenceInDays
+ * @category Day Helpers
+ * @summary Get the number of full days between the given dates.
+ *
+ * @description
+ * Get the number of full day periods between two dates. Fractional days are
+ * truncated towards zero.
+ *
+ * One "full day" is the distance between a local time in one day to the same
+ * local time on the next or previous day. A full day can sometimes be less than
+ * or more than 24 hours if a daylight savings change happens between two dates.
+ *
+ * To ignore DST and only measure exact 24-hour periods, use this instead:
+ * `Math.floor(differenceInHours(dateLeft, dateRight)/24)|0`.
+ *
+ *
+ * ### v2.0.0 breaking changes:
+ *
+ * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
+ *
+ * @param {Date|Number} dateLeft - the later date
+ * @param {Date|Number} dateRight - the earlier date
+ * @returns {Number} the number of full days according to the local timezone
+ * @throws {TypeError} 2 arguments required
+ *
+ * @example
+ * // How many full days are between
+ * // 2 July 2011 23:00:00 and 2 July 2012 00:00:00?
+ * const result = differenceInDays(
+ *   new Date(2012, 6, 2, 0, 0),
+ *   new Date(2011, 6, 2, 23, 0)
+ * )
+ * //=> 365
+ * // How many full days are between
+ * // 2 July 2011 23:59:00 and 3 July 2011 00:01:00?
+ * const result = differenceInDays(
+ *   new Date(2011, 6, 3, 0, 1),
+ *   new Date(2011, 6, 2, 23, 59)
+ * )
+ * //=> 0
+ * // How many full days are between
+ * // 1 March 2020 0:00 and 1 June 2020 0:00 ?
+ * // Note: because local time is used, the
+ * // result will always be 92 days, even in
+ * // time zones where DST starts and the
+ * // period has only 92*24-1 hours.
+ * const result = differenceInDays(
+ *   new Date(2020, 5, 1),
+ *   new Date(2020, 2, 1)
+ * )
+//=> 92
+ */
+
+
+function differenceInDays(dirtyDateLeft, dirtyDateRight) {
+  (0,_lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(2, arguments);
+  var dateLeft = (0,_toDate_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dirtyDateLeft);
+  var dateRight = (0,_toDate_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dirtyDateRight);
+  var sign = compareLocalAsc(dateLeft, dateRight);
+  var difference = Math.abs((0,_differenceInCalendarDays_index_js__WEBPACK_IMPORTED_MODULE_2__["default"])(dateLeft, dateRight));
+  dateLeft.setDate(dateLeft.getDate() - sign * difference); // Math.abs(diff in full days - diff in calendar days) === 1 if last calendar day is not full
+  // If so, result must be decreased by 1 in absolute value
+
+  var isLastDayNotFull = Number(compareLocalAsc(dateLeft, dateRight) === -sign);
+  var result = sign * (difference - isLastDayNotFull); // Prevent negative zero
+
+  return result === 0 ? 0 : result;
+}
+
+/***/ }),
+
+/***/ 9805:
+/*!**************************************************************!*\
+  !*** ./node_modules/date-fns/esm/differenceInHours/index.js ***!
+  \**************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ differenceInHours)
+/* harmony export */ });
+/* harmony import */ var _constants_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../constants/index.js */ 677);
+/* harmony import */ var _differenceInMilliseconds_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../differenceInMilliseconds/index.js */ 4913);
+/* harmony import */ var _lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_lib/requiredArgs/index.js */ 1170);
+/* harmony import */ var _lib_roundingMethods_index_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../_lib/roundingMethods/index.js */ 967);
+
+
+
+
+/**
+ * @name differenceInHours
+ * @category Hour Helpers
+ * @summary Get the number of hours between the given dates.
+ *
+ * @description
+ * Get the number of hours between the given dates.
+ *
+ * ### v2.0.0 breaking changes:
+ *
+ * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
+ *
+ * @param {Date|Number} dateLeft - the later date
+ * @param {Date|Number} dateRight - the earlier date
+ * @param {Object} [options] - an object with options.
+ * @param {String} [options.roundingMethod='trunc'] - a rounding method (`ceil`, `floor`, `round` or `trunc`)
+ * @returns {Number} the number of hours
+ * @throws {TypeError} 2 arguments required
+ *
+ * @example
+ * // How many hours are between 2 July 2014 06:50:00 and 2 July 2014 19:00:00?
+ * const result = differenceInHours(
+ *   new Date(2014, 6, 2, 19, 0),
+ *   new Date(2014, 6, 2, 6, 50)
+ * )
+ * //=> 12
+ */
+
+function differenceInHours(dateLeft, dateRight, options) {
+  (0,_lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(2, arguments);
+  var diff = (0,_differenceInMilliseconds_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dateLeft, dateRight) / _constants_index_js__WEBPACK_IMPORTED_MODULE_2__.millisecondsInHour;
+  return (0,_lib_roundingMethods_index_js__WEBPACK_IMPORTED_MODULE_3__.getRoundingMethod)(options === null || options === void 0 ? void 0 : options.roundingMethod)(diff);
+}
+
+/***/ }),
+
+/***/ 4913:
+/*!*********************************************************************!*\
+  !*** ./node_modules/date-fns/esm/differenceInMilliseconds/index.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ differenceInMilliseconds)
+/* harmony export */ });
+/* harmony import */ var _toDate_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../toDate/index.js */ 8325);
+/* harmony import */ var _lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_lib/requiredArgs/index.js */ 1170);
+
+
+/**
+ * @name differenceInMilliseconds
+ * @category Millisecond Helpers
+ * @summary Get the number of milliseconds between the given dates.
+ *
+ * @description
+ * Get the number of milliseconds between the given dates.
+ *
+ * ### v2.0.0 breaking changes:
+ *
+ * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
+ *
+ * @param {Date|Number} dateLeft - the later date
+ * @param {Date|Number} dateRight - the earlier date
+ * @returns {Number} the number of milliseconds
+ * @throws {TypeError} 2 arguments required
+ *
+ * @example
+ * // How many milliseconds are between
+ * // 2 July 2014 12:30:20.600 and 2 July 2014 12:30:21.700?
+ * const result = differenceInMilliseconds(
+ *   new Date(2014, 6, 2, 12, 30, 21, 700),
+ *   new Date(2014, 6, 2, 12, 30, 20, 600)
+ * )
+ * //=> 1100
+ */
+
+function differenceInMilliseconds(dateLeft, dateRight) {
+  (0,_lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(2, arguments);
+  return (0,_toDate_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dateLeft).getTime() - (0,_toDate_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dateRight).getTime();
+}
+
+/***/ }),
+
+/***/ 371:
+/*!****************************************************************!*\
+  !*** ./node_modules/date-fns/esm/differenceInMinutes/index.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ differenceInMinutes)
+/* harmony export */ });
+/* harmony import */ var _constants_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../constants/index.js */ 677);
+/* harmony import */ var _differenceInMilliseconds_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../differenceInMilliseconds/index.js */ 4913);
+/* harmony import */ var _lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_lib/requiredArgs/index.js */ 1170);
+/* harmony import */ var _lib_roundingMethods_index_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../_lib/roundingMethods/index.js */ 967);
+
+
+
+
+/**
+ * @name differenceInMinutes
+ * @category Minute Helpers
+ * @summary Get the number of minutes between the given dates.
+ *
+ * @description
+ * Get the signed number of full (rounded towards 0) minutes between the given dates.
+ *
+ * ### v2.0.0 breaking changes:
+ *
+ * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
+ *
+ * @param {Date|Number} dateLeft - the later date
+ * @param {Date|Number} dateRight - the earlier date
+ * @param {Object} [options] - an object with options.
+ * @param {String} [options.roundingMethod='trunc'] - a rounding method (`ceil`, `floor`, `round` or `trunc`)
+ * @returns {Number} the number of minutes
+ * @throws {TypeError} 2 arguments required
+ *
+ * @example
+ * // How many minutes are between 2 July 2014 12:07:59 and 2 July 2014 12:20:00?
+ * const result = differenceInMinutes(
+ *   new Date(2014, 6, 2, 12, 20, 0),
+ *   new Date(2014, 6, 2, 12, 7, 59)
+ * )
+ * //=> 12
+ *
+ * @example
+ * // How many minutes are between 10:01:59 and 10:00:00
+ * const result = differenceInMinutes(
+ *   new Date(2000, 0, 1, 10, 0, 0),
+ *   new Date(2000, 0, 1, 10, 1, 59)
+ * )
+ * //=> -1
+ */
+
+function differenceInMinutes(dateLeft, dateRight, options) {
+  (0,_lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(2, arguments);
+  var diff = (0,_differenceInMilliseconds_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dateLeft, dateRight) / _constants_index_js__WEBPACK_IMPORTED_MODULE_2__.millisecondsInMinute;
+  return (0,_lib_roundingMethods_index_js__WEBPACK_IMPORTED_MODULE_3__.getRoundingMethod)(options === null || options === void 0 ? void 0 : options.roundingMethod)(diff);
+}
+
+/***/ }),
+
+/***/ 2258:
+/*!***************************************************************!*\
+  !*** ./node_modules/date-fns/esm/differenceInMonths/index.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ differenceInMonths)
+/* harmony export */ });
+/* harmony import */ var _toDate_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../toDate/index.js */ 8325);
+/* harmony import */ var _differenceInCalendarMonths_index_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../differenceInCalendarMonths/index.js */ 9480);
+/* harmony import */ var _compareAsc_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../compareAsc/index.js */ 6579);
+/* harmony import */ var _lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_lib/requiredArgs/index.js */ 1170);
+/* harmony import */ var _isLastDayOfMonth_index_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../isLastDayOfMonth/index.js */ 1807);
+
+
+
+
+
+/**
+ * @name differenceInMonths
+ * @category Month Helpers
+ * @summary Get the number of full months between the given dates.
+ *
+ * @description
+ * Get the number of full months between the given dates using trunc as a default rounding method.
+ *
+ * ### v2.0.0 breaking changes:
+ *
+ * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
+ *
+ * @param {Date|Number} dateLeft - the later date
+ * @param {Date|Number} dateRight - the earlier date
+ * @returns {Number} the number of full months
+ * @throws {TypeError} 2 arguments required
+ *
+ * @example
+ * // How many full months are between 31 January 2014 and 1 September 2014?
+ * const result = differenceInMonths(new Date(2014, 8, 1), new Date(2014, 0, 31))
+ * //=> 7
+ */
+
+function differenceInMonths(dirtyDateLeft, dirtyDateRight) {
+  (0,_lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(2, arguments);
+  var dateLeft = (0,_toDate_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dirtyDateLeft);
+  var dateRight = (0,_toDate_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dirtyDateRight);
+  var sign = (0,_compareAsc_index_js__WEBPACK_IMPORTED_MODULE_2__["default"])(dateLeft, dateRight);
+  var difference = Math.abs((0,_differenceInCalendarMonths_index_js__WEBPACK_IMPORTED_MODULE_3__["default"])(dateLeft, dateRight));
+  var result; // Check for the difference of less than month
+
+  if (difference < 1) {
+    result = 0;
+  } else {
+    if (dateLeft.getMonth() === 1 && dateLeft.getDate() > 27) {
+      // This will check if the date is end of Feb and assign a higher end of month date
+      // to compare it with Jan
+      dateLeft.setDate(30);
+    }
+
+    dateLeft.setMonth(dateLeft.getMonth() - sign * difference); // Math.abs(diff in full months - diff in calendar months) === 1 if last calendar month is not full
+    // If so, result must be decreased by 1 in absolute value
+
+    var isLastMonthNotFull = (0,_compareAsc_index_js__WEBPACK_IMPORTED_MODULE_2__["default"])(dateLeft, dateRight) === -sign; // Check for cases of one full calendar month
+
+    if ((0,_isLastDayOfMonth_index_js__WEBPACK_IMPORTED_MODULE_4__["default"])((0,_toDate_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dirtyDateLeft)) && difference === 1 && (0,_compareAsc_index_js__WEBPACK_IMPORTED_MODULE_2__["default"])(dirtyDateLeft, dateRight) === 1) {
+      isLastMonthNotFull = false;
+    }
+
+    result = sign * (difference - Number(isLastMonthNotFull));
+  } // Prevent negative zero
+
+
+  return result === 0 ? 0 : result;
+}
+
+/***/ }),
+
+/***/ 7860:
+/*!****************************************************************!*\
+  !*** ./node_modules/date-fns/esm/differenceInSeconds/index.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ differenceInSeconds)
+/* harmony export */ });
+/* harmony import */ var _differenceInMilliseconds_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../differenceInMilliseconds/index.js */ 4913);
+/* harmony import */ var _lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_lib/requiredArgs/index.js */ 1170);
+/* harmony import */ var _lib_roundingMethods_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../_lib/roundingMethods/index.js */ 967);
+
+
+
+/**
+ * @name differenceInSeconds
+ * @category Second Helpers
+ * @summary Get the number of seconds between the given dates.
+ *
+ * @description
+ * Get the number of seconds between the given dates.
+ *
+ * ### v2.0.0 breaking changes:
+ *
+ * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
+ *
+ * @param {Date|Number} dateLeft - the later date
+ * @param {Date|Number} dateRight - the earlier date
+ * @param {Object} [options] - an object with options.
+ * @param {String} [options.roundingMethod='trunc'] - a rounding method (`ceil`, `floor`, `round` or `trunc`)
+ * @returns {Number} the number of seconds
+ * @throws {TypeError} 2 arguments required
+ *
+ * @example
+ * // How many seconds are between
+ * // 2 July 2014 12:30:07.999 and 2 July 2014 12:30:20.000?
+ * const result = differenceInSeconds(
+ *   new Date(2014, 6, 2, 12, 30, 20, 0),
+ *   new Date(2014, 6, 2, 12, 30, 7, 999)
+ * )
+ * //=> 12
+ */
+
+function differenceInSeconds(dateLeft, dateRight, options) {
+  (0,_lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(2, arguments);
+  var diff = (0,_differenceInMilliseconds_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dateLeft, dateRight) / 1000;
+  return (0,_lib_roundingMethods_index_js__WEBPACK_IMPORTED_MODULE_2__.getRoundingMethod)(options === null || options === void 0 ? void 0 : options.roundingMethod)(diff);
+}
+
+/***/ }),
+
+/***/ 3200:
+/*!*****************************************************!*\
+  !*** ./node_modules/date-fns/esm/endOfDay/index.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ endOfDay)
+/* harmony export */ });
+/* harmony import */ var _toDate_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../toDate/index.js */ 8325);
+/* harmony import */ var _lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_lib/requiredArgs/index.js */ 1170);
+
+
+/**
+ * @name endOfDay
+ * @category Day Helpers
+ * @summary Return the end of a day for the given date.
+ *
+ * @description
+ * Return the end of a day for the given date.
+ * The result will be in the local timezone.
+ *
+ * ### v2.0.0 breaking changes:
+ *
+ * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
+ *
+ * @param {Date|Number} date - the original date
+ * @returns {Date} the end of a day
+ * @throws {TypeError} 1 argument required
+ *
+ * @example
+ * // The end of a day for 2 September 2014 11:55:00:
+ * const result = endOfDay(new Date(2014, 8, 2, 11, 55, 0))
+ * //=> Tue Sep 02 2014 23:59:59.999
+ */
+
+function endOfDay(dirtyDate) {
+  (0,_lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(1, arguments);
+  var date = (0,_toDate_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dirtyDate);
+  date.setHours(23, 59, 59, 999);
+  return date;
+}
+
+/***/ }),
+
+/***/ 1618:
+/*!*******************************************************!*\
+  !*** ./node_modules/date-fns/esm/endOfMonth/index.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ endOfMonth)
+/* harmony export */ });
+/* harmony import */ var _toDate_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../toDate/index.js */ 8325);
+/* harmony import */ var _lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_lib/requiredArgs/index.js */ 1170);
+
+
+/**
+ * @name endOfMonth
+ * @category Month Helpers
+ * @summary Return the end of a month for the given date.
+ *
+ * @description
+ * Return the end of a month for the given date.
+ * The result will be in the local timezone.
+ *
+ * ### v2.0.0 breaking changes:
+ *
+ * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
+ *
+ * @param {Date|Number} date - the original date
+ * @returns {Date} the end of a month
+ * @throws {TypeError} 1 argument required
+ *
+ * @example
+ * // The end of a month for 2 September 2014 11:55:00:
+ * const result = endOfMonth(new Date(2014, 8, 2, 11, 55, 0))
+ * //=> Tue Sep 30 2014 23:59:59.999
+ */
+
+function endOfMonth(dirtyDate) {
+  (0,_lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(1, arguments);
+  var date = (0,_toDate_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dirtyDate);
+  var month = date.getMonth();
+  date.setFullYear(date.getFullYear(), month + 1, 0);
+  date.setHours(23, 59, 59, 999);
+  return date;
+}
+
+/***/ }),
+
+/***/ 1807:
+/*!*************************************************************!*\
+  !*** ./node_modules/date-fns/esm/isLastDayOfMonth/index.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ isLastDayOfMonth)
+/* harmony export */ });
+/* harmony import */ var _toDate_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../toDate/index.js */ 8325);
+/* harmony import */ var _endOfDay_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../endOfDay/index.js */ 3200);
+/* harmony import */ var _endOfMonth_index_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../endOfMonth/index.js */ 1618);
+/* harmony import */ var _lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_lib/requiredArgs/index.js */ 1170);
+
+
+
+
+/**
+ * @name isLastDayOfMonth
+ * @category Month Helpers
+ * @summary Is the given date the last day of a month?
+ *
+ * @description
+ * Is the given date the last day of a month?
+ *
+ * ### v2.0.0 breaking changes:
+ *
+ * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
+ *
+ * @param {Date|Number} date - the date to check
+ * @returns {Boolean} the date is the last day of a month
+ * @throws {TypeError} 1 argument required
+ *
+ * @example
+ * // Is 28 February 2014 the last day of a month?
+ * var result = isLastDayOfMonth(new Date(2014, 1, 28))
+ * //=> true
+ */
+
+function isLastDayOfMonth(dirtyDate) {
+  (0,_lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(1, arguments);
+  var date = (0,_toDate_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dirtyDate);
+  return (0,_endOfDay_index_js__WEBPACK_IMPORTED_MODULE_2__["default"])(date).getTime() === (0,_endOfMonth_index_js__WEBPACK_IMPORTED_MODULE_3__["default"])(date).getTime();
+}
+
+/***/ }),
+
+/***/ 9377:
+/*!*******************************************************!*\
+  !*** ./node_modules/date-fns/esm/startOfDay/index.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ startOfDay)
+/* harmony export */ });
+/* harmony import */ var _toDate_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../toDate/index.js */ 8325);
+/* harmony import */ var _lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_lib/requiredArgs/index.js */ 1170);
+
+
+/**
+ * @name startOfDay
+ * @category Day Helpers
+ * @summary Return the start of a day for the given date.
+ *
+ * @description
+ * Return the start of a day for the given date.
+ * The result will be in the local timezone.
+ *
+ * ### v2.0.0 breaking changes:
+ *
+ * - [Changes that are common for the whole library](https://github.com/date-fns/date-fns/blob/master/docs/upgradeGuide.md#Common-Changes).
+ *
+ * @param {Date|Number} date - the original date
+ * @returns {Date} the start of a day
+ * @throws {TypeError} 1 argument required
+ *
+ * @example
+ * // The start of a day for 2 September 2014 11:55:00:
+ * const result = startOfDay(new Date(2014, 8, 2, 11, 55, 0))
+ * //=> Tue Sep 02 2014 00:00:00
+ */
+
+function startOfDay(dirtyDate) {
+  (0,_lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(1, arguments);
+  var date = (0,_toDate_index_js__WEBPACK_IMPORTED_MODULE_1__["default"])(dirtyDate);
+  date.setHours(0, 0, 0, 0);
+  return date;
+}
+
+/***/ }),
+
+/***/ 8325:
+/*!***************************************************!*\
+  !*** ./node_modules/date-fns/esm/toDate/index.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ toDate)
+/* harmony export */ });
+/* harmony import */ var _lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../_lib/requiredArgs/index.js */ 1170);
+
+/**
+ * @name toDate
+ * @category Common Helpers
+ * @summary Convert the given argument to an instance of Date.
+ *
+ * @description
+ * Convert the given argument to an instance of Date.
+ *
+ * If the argument is an instance of Date, the function returns its clone.
+ *
+ * If the argument is a number, it is treated as a timestamp.
+ *
+ * If the argument is none of the above, the function returns Invalid Date.
+ *
+ * **Note**: *all* Date arguments passed to any *date-fns* function is processed by `toDate`.
+ *
+ * @param {Date|Number} argument - the value to convert
+ * @returns {Date} the parsed date in the local time zone
+ * @throws {TypeError} 1 argument required
+ *
+ * @example
+ * // Clone the date:
+ * const result = toDate(new Date(2014, 1, 11, 11, 30, 30))
+ * //=> Tue Feb 11 2014 11:30:30
+ *
+ * @example
+ * // Convert the timestamp to date:
+ * const result = toDate(1392098430000)
+ * //=> Tue Feb 11 2014 11:30:30
+ */
+
+function toDate(argument) {
+  (0,_lib_requiredArgs_index_js__WEBPACK_IMPORTED_MODULE_0__["default"])(1, arguments);
+  var argStr = Object.prototype.toString.call(argument); // Clone the date
+
+  if (argument instanceof Date || typeof argument === 'object' && argStr === '[object Date]') {
+    // Prevent the date to lose the milliseconds when passed to new Date() in IE10
+    return new Date(argument.getTime());
+  } else if (typeof argument === 'number' || argStr === '[object Number]') {
+    return new Date(argument);
+  } else {
+    if ((typeof argument === 'string' || argStr === '[object String]') && typeof console !== 'undefined') {
+      // eslint-disable-next-line no-console
+      console.warn("Starting with v2.0.0-beta.1 date-fns doesn't accept strings as date arguments. Please use `parseISO` to parse strings. See: https://git.io/fjule"); // eslint-disable-next-line no-console
+
+      console.warn(new Error().stack);
+    }
+
+    return new Date(NaN);
+  }
+}
+
+/***/ }),
+
 /***/ 4505:
 /*!****************************************************************!*\
   !*** ./node_modules/rxjs/_esm2015/internal/BehaviorSubject.js ***!
@@ -16807,6 +18590,96 @@ class InnerSubscriber extends _Subscriber__WEBPACK_IMPORTED_MODULE_0__.Subscribe
         this.unsubscribe();
     }
 }
+
+
+/***/ }),
+
+/***/ 7928:
+/*!*************************************************************!*\
+  !*** ./node_modules/rxjs/_esm2015/internal/Notification.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NotificationKind": () => (/* binding */ NotificationKind),
+/* harmony export */   "Notification": () => (/* binding */ Notification)
+/* harmony export */ });
+/* harmony import */ var _observable_empty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./observable/empty */ 6439);
+/* harmony import */ var _observable_of__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./observable/of */ 4139);
+/* harmony import */ var _observable_throwError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./observable/throwError */ 6587);
+
+
+
+var NotificationKind;
+(function (NotificationKind) {
+    NotificationKind["NEXT"] = "N";
+    NotificationKind["ERROR"] = "E";
+    NotificationKind["COMPLETE"] = "C";
+})(NotificationKind || (NotificationKind = {}));
+class Notification {
+    constructor(kind, value, error) {
+        this.kind = kind;
+        this.value = value;
+        this.error = error;
+        this.hasValue = kind === 'N';
+    }
+    observe(observer) {
+        switch (this.kind) {
+            case 'N':
+                return observer.next && observer.next(this.value);
+            case 'E':
+                return observer.error && observer.error(this.error);
+            case 'C':
+                return observer.complete && observer.complete();
+        }
+    }
+    do(next, error, complete) {
+        const kind = this.kind;
+        switch (kind) {
+            case 'N':
+                return next && next(this.value);
+            case 'E':
+                return error && error(this.error);
+            case 'C':
+                return complete && complete();
+        }
+    }
+    accept(nextOrObserver, error, complete) {
+        if (nextOrObserver && typeof nextOrObserver.next === 'function') {
+            return this.observe(nextOrObserver);
+        }
+        else {
+            return this.do(nextOrObserver, error, complete);
+        }
+    }
+    toObservable() {
+        const kind = this.kind;
+        switch (kind) {
+            case 'N':
+                return (0,_observable_of__WEBPACK_IMPORTED_MODULE_0__.of)(this.value);
+            case 'E':
+                return (0,_observable_throwError__WEBPACK_IMPORTED_MODULE_1__.throwError)(this.error);
+            case 'C':
+                return (0,_observable_empty__WEBPACK_IMPORTED_MODULE_2__.empty)();
+        }
+        throw new Error('unexpected notification kind value');
+    }
+    static createNext(value) {
+        if (typeof value !== 'undefined') {
+            return new Notification('N', value);
+        }
+        return Notification.undefinedValueNotification;
+    }
+    static createError(err) {
+        return new Notification('E', undefined, err);
+    }
+    static createComplete() {
+        return Notification.completeNotification;
+    }
+}
+Notification.completeNotification = new Notification('C');
+Notification.undefinedValueNotification = new Notification('N', undefined);
 
 
 /***/ }),
@@ -16990,6 +18863,30 @@ class OuterSubscriber extends _Subscriber__WEBPACK_IMPORTED_MODULE_0__.Subscribe
         this.destination.complete();
     }
 }
+
+
+/***/ }),
+
+/***/ 1925:
+/*!**********************************************************!*\
+  !*** ./node_modules/rxjs/_esm2015/internal/Scheduler.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Scheduler": () => (/* binding */ Scheduler)
+/* harmony export */ });
+class Scheduler {
+    constructor(SchedulerAction, now = Scheduler.now) {
+        this.SchedulerAction = SchedulerAction;
+        this.now = now;
+    }
+    schedule(work, delay = 0, state) {
+        return new this.SchedulerAction(this, work).schedule(state, delay);
+    }
+}
+Scheduler.now = () => Date.now();
 
 
 /***/ }),
@@ -17452,7 +19349,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "Subscription": () => (/* binding */ Subscription)
 /* harmony export */ });
 /* harmony import */ var _util_isArray__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./util/isArray */ 4327);
-/* harmony import */ var _util_isObject__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./util/isObject */ 6549);
+/* harmony import */ var _util_isObject__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./util/isObject */ 5550);
 /* harmony import */ var _util_isFunction__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./util/isFunction */ 1900);
 /* harmony import */ var _util_UnsubscriptionError__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./util/UnsubscriptionError */ 7875);
 
@@ -18073,7 +19970,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Observable__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Observable */ 2378);
 /* harmony import */ var _util_isArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../util/isArray */ 4327);
 /* harmony import */ var _operators_map__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../operators/map */ 6942);
-/* harmony import */ var _util_isObject__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/isObject */ 6549);
+/* harmony import */ var _util_isObject__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/isObject */ 5550);
 /* harmony import */ var _from__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./from */ 4383);
 
 
@@ -18277,6 +20174,43 @@ function isEventTarget(sourceObj) {
 
 /***/ }),
 
+/***/ 3491:
+/*!********************************************************************!*\
+  !*** ./node_modules/rxjs/_esm2015/internal/observable/interval.js ***!
+  \********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "interval": () => (/* binding */ interval)
+/* harmony export */ });
+/* harmony import */ var _Observable__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Observable */ 2378);
+/* harmony import */ var _scheduler_async__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scheduler/async */ 328);
+/* harmony import */ var _util_isNumeric__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/isNumeric */ 7269);
+
+
+
+function interval(period = 0, scheduler = _scheduler_async__WEBPACK_IMPORTED_MODULE_0__.async) {
+    if (!(0,_util_isNumeric__WEBPACK_IMPORTED_MODULE_1__.isNumeric)(period) || period < 0) {
+        period = 0;
+    }
+    if (!scheduler || typeof scheduler.schedule !== 'function') {
+        scheduler = _scheduler_async__WEBPACK_IMPORTED_MODULE_0__.async;
+    }
+    return new _Observable__WEBPACK_IMPORTED_MODULE_2__.Observable(subscriber => {
+        subscriber.add(scheduler.schedule(dispatch, period, { subscriber, counter: 0, period }));
+        return subscriber;
+    });
+}
+function dispatch(state) {
+    const { subscriber, counter, period } = state;
+    subscriber.next(counter);
+    this.schedule({ subscriber, counter: counter + 1, period }, period);
+}
+
+
+/***/ }),
+
 /***/ 8623:
 /*!*****************************************************************!*\
   !*** ./node_modules/rxjs/_esm2015/internal/observable/merge.js ***!
@@ -18312,6 +20246,29 @@ function merge(...observables) {
         return observables[0];
     }
     return (0,_operators_mergeAll__WEBPACK_IMPORTED_MODULE_2__.mergeAll)(concurrent)((0,_fromArray__WEBPACK_IMPORTED_MODULE_3__.fromArray)(observables, scheduler));
+}
+
+
+/***/ }),
+
+/***/ 8130:
+/*!*****************************************************************!*\
+  !*** ./node_modules/rxjs/_esm2015/internal/observable/never.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "NEVER": () => (/* binding */ NEVER),
+/* harmony export */   "never": () => (/* binding */ never)
+/* harmony export */ });
+/* harmony import */ var _Observable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Observable */ 2378);
+/* harmony import */ var _util_noop__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/noop */ 6882);
+
+
+const NEVER = new _Observable__WEBPACK_IMPORTED_MODULE_0__.Observable(_util_noop__WEBPACK_IMPORTED_MODULE_1__.noop);
+function never() {
+    return NEVER;
 }
 
 
@@ -18507,6 +20464,106 @@ class DefaultIfEmptySubscriber extends _Subscriber__WEBPACK_IMPORTED_MODULE_0__.
             this.destination.next(this.defaultValue);
         }
         this.destination.complete();
+    }
+}
+
+
+/***/ }),
+
+/***/ 5843:
+/*!****************************************************************!*\
+  !*** ./node_modules/rxjs/_esm2015/internal/operators/delay.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "delay": () => (/* binding */ delay)
+/* harmony export */ });
+/* harmony import */ var _scheduler_async__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../scheduler/async */ 328);
+/* harmony import */ var _util_isDate__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/isDate */ 1293);
+/* harmony import */ var _Subscriber__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Subscriber */ 14);
+/* harmony import */ var _Notification__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Notification */ 7928);
+
+
+
+
+function delay(delay, scheduler = _scheduler_async__WEBPACK_IMPORTED_MODULE_0__.async) {
+    const absoluteDelay = (0,_util_isDate__WEBPACK_IMPORTED_MODULE_1__.isDate)(delay);
+    const delayFor = absoluteDelay ? (+delay - scheduler.now()) : Math.abs(delay);
+    return (source) => source.lift(new DelayOperator(delayFor, scheduler));
+}
+class DelayOperator {
+    constructor(delay, scheduler) {
+        this.delay = delay;
+        this.scheduler = scheduler;
+    }
+    call(subscriber, source) {
+        return source.subscribe(new DelaySubscriber(subscriber, this.delay, this.scheduler));
+    }
+}
+class DelaySubscriber extends _Subscriber__WEBPACK_IMPORTED_MODULE_2__.Subscriber {
+    constructor(destination, delay, scheduler) {
+        super(destination);
+        this.delay = delay;
+        this.scheduler = scheduler;
+        this.queue = [];
+        this.active = false;
+        this.errored = false;
+    }
+    static dispatch(state) {
+        const source = state.source;
+        const queue = source.queue;
+        const scheduler = state.scheduler;
+        const destination = state.destination;
+        while (queue.length > 0 && (queue[0].time - scheduler.now()) <= 0) {
+            queue.shift().notification.observe(destination);
+        }
+        if (queue.length > 0) {
+            const delay = Math.max(0, queue[0].time - scheduler.now());
+            this.schedule(state, delay);
+        }
+        else {
+            this.unsubscribe();
+            source.active = false;
+        }
+    }
+    _schedule(scheduler) {
+        this.active = true;
+        const destination = this.destination;
+        destination.add(scheduler.schedule(DelaySubscriber.dispatch, this.delay, {
+            source: this, destination: this.destination, scheduler: scheduler
+        }));
+    }
+    scheduleNotification(notification) {
+        if (this.errored === true) {
+            return;
+        }
+        const scheduler = this.scheduler;
+        const message = new DelayMessage(scheduler.now() + this.delay, notification);
+        this.queue.push(message);
+        if (this.active === false) {
+            this._schedule(scheduler);
+        }
+    }
+    _next(value) {
+        this.scheduleNotification(_Notification__WEBPACK_IMPORTED_MODULE_3__.Notification.createNext(value));
+    }
+    _error(err) {
+        this.errored = true;
+        this.queue = [];
+        this.destination.error(err);
+        this.unsubscribe();
+    }
+    _complete() {
+        this.scheduleNotification(_Notification__WEBPACK_IMPORTED_MODULE_3__.Notification.createComplete());
+        this.unsubscribe();
+    }
+}
+class DelayMessage {
+    constructor(time, notification) {
+        this.time = time;
+        this.notification = notification;
     }
 }
 
@@ -18949,6 +21006,29 @@ class MulticastOperator {
         subscription.add(source.subscribe(subject));
         return subscription;
     }
+}
+
+
+/***/ }),
+
+/***/ 9708:
+/*!******************************************************************!*\
+  !*** ./node_modules/rxjs/_esm2015/internal/operators/publish.js ***!
+  \******************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "publish": () => (/* binding */ publish)
+/* harmony export */ });
+/* harmony import */ var _Subject__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Subject */ 2218);
+/* harmony import */ var _multicast__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./multicast */ 2787);
+
+
+function publish(selector) {
+    return selector ?
+        (0,_multicast__WEBPACK_IMPORTED_MODULE_0__.multicast)(() => new _Subject__WEBPACK_IMPORTED_MODULE_1__.Subject(), selector) :
+        (0,_multicast__WEBPACK_IMPORTED_MODULE_0__.multicast)(new _Subject__WEBPACK_IMPORTED_MODULE_1__.Subject());
 }
 
 
@@ -19718,6 +21798,205 @@ function scheduled(input, scheduler) {
 
 /***/ }),
 
+/***/ 5353:
+/*!*****************************************************************!*\
+  !*** ./node_modules/rxjs/_esm2015/internal/scheduler/Action.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "Action": () => (/* binding */ Action)
+/* harmony export */ });
+/* harmony import */ var _Subscription__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Subscription */ 2425);
+
+class Action extends _Subscription__WEBPACK_IMPORTED_MODULE_0__.Subscription {
+    constructor(scheduler, work) {
+        super();
+    }
+    schedule(state, delay = 0) {
+        return this;
+    }
+}
+
+
+/***/ }),
+
+/***/ 3670:
+/*!**********************************************************************!*\
+  !*** ./node_modules/rxjs/_esm2015/internal/scheduler/AsyncAction.js ***!
+  \**********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "AsyncAction": () => (/* binding */ AsyncAction)
+/* harmony export */ });
+/* harmony import */ var _Action__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Action */ 5353);
+
+class AsyncAction extends _Action__WEBPACK_IMPORTED_MODULE_0__.Action {
+    constructor(scheduler, work) {
+        super(scheduler, work);
+        this.scheduler = scheduler;
+        this.work = work;
+        this.pending = false;
+    }
+    schedule(state, delay = 0) {
+        if (this.closed) {
+            return this;
+        }
+        this.state = state;
+        const id = this.id;
+        const scheduler = this.scheduler;
+        if (id != null) {
+            this.id = this.recycleAsyncId(scheduler, id, delay);
+        }
+        this.pending = true;
+        this.delay = delay;
+        this.id = this.id || this.requestAsyncId(scheduler, this.id, delay);
+        return this;
+    }
+    requestAsyncId(scheduler, id, delay = 0) {
+        return setInterval(scheduler.flush.bind(scheduler, this), delay);
+    }
+    recycleAsyncId(scheduler, id, delay = 0) {
+        if (delay !== null && this.delay === delay && this.pending === false) {
+            return id;
+        }
+        clearInterval(id);
+        return undefined;
+    }
+    execute(state, delay) {
+        if (this.closed) {
+            return new Error('executing a cancelled action');
+        }
+        this.pending = false;
+        const error = this._execute(state, delay);
+        if (error) {
+            return error;
+        }
+        else if (this.pending === false && this.id != null) {
+            this.id = this.recycleAsyncId(this.scheduler, this.id, null);
+        }
+    }
+    _execute(state, delay) {
+        let errored = false;
+        let errorValue = undefined;
+        try {
+            this.work(state);
+        }
+        catch (e) {
+            errored = true;
+            errorValue = !!e && e || new Error(e);
+        }
+        if (errored) {
+            this.unsubscribe();
+            return errorValue;
+        }
+    }
+    _unsubscribe() {
+        const id = this.id;
+        const scheduler = this.scheduler;
+        const actions = scheduler.actions;
+        const index = actions.indexOf(this);
+        this.work = null;
+        this.state = null;
+        this.pending = false;
+        this.scheduler = null;
+        if (index !== -1) {
+            actions.splice(index, 1);
+        }
+        if (id != null) {
+            this.id = this.recycleAsyncId(scheduler, id, null);
+        }
+        this.delay = null;
+    }
+}
+
+
+/***/ }),
+
+/***/ 2901:
+/*!*************************************************************************!*\
+  !*** ./node_modules/rxjs/_esm2015/internal/scheduler/AsyncScheduler.js ***!
+  \*************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "AsyncScheduler": () => (/* binding */ AsyncScheduler)
+/* harmony export */ });
+/* harmony import */ var _Scheduler__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../Scheduler */ 1925);
+
+class AsyncScheduler extends _Scheduler__WEBPACK_IMPORTED_MODULE_0__.Scheduler {
+    constructor(SchedulerAction, now = _Scheduler__WEBPACK_IMPORTED_MODULE_0__.Scheduler.now) {
+        super(SchedulerAction, () => {
+            if (AsyncScheduler.delegate && AsyncScheduler.delegate !== this) {
+                return AsyncScheduler.delegate.now();
+            }
+            else {
+                return now();
+            }
+        });
+        this.actions = [];
+        this.active = false;
+        this.scheduled = undefined;
+    }
+    schedule(work, delay = 0, state) {
+        if (AsyncScheduler.delegate && AsyncScheduler.delegate !== this) {
+            return AsyncScheduler.delegate.schedule(work, delay, state);
+        }
+        else {
+            return super.schedule(work, delay, state);
+        }
+    }
+    flush(action) {
+        const { actions } = this;
+        if (this.active) {
+            actions.push(action);
+            return;
+        }
+        let error;
+        this.active = true;
+        do {
+            if (error = action.execute(action.state, action.delay)) {
+                break;
+            }
+        } while (action = actions.shift());
+        this.active = false;
+        if (error) {
+            while (action = actions.shift()) {
+                action.unsubscribe();
+            }
+            throw error;
+        }
+    }
+}
+
+
+/***/ }),
+
+/***/ 328:
+/*!****************************************************************!*\
+  !*** ./node_modules/rxjs/_esm2015/internal/scheduler/async.js ***!
+  \****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "asyncScheduler": () => (/* binding */ asyncScheduler),
+/* harmony export */   "async": () => (/* binding */ async)
+/* harmony export */ });
+/* harmony import */ var _AsyncAction__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./AsyncAction */ 3670);
+/* harmony import */ var _AsyncScheduler__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./AsyncScheduler */ 2901);
+
+
+const asyncScheduler = new _AsyncScheduler__WEBPACK_IMPORTED_MODULE_0__.AsyncScheduler(_AsyncAction__WEBPACK_IMPORTED_MODULE_1__.AsyncAction);
+const async = asyncScheduler;
+
+
+/***/ }),
+
 /***/ 2803:
 /*!****************************************************************!*\
   !*** ./node_modules/rxjs/_esm2015/internal/symbol/iterator.js ***!
@@ -19974,6 +22253,23 @@ const isArrayLike = ((x) => x && typeof x.length === 'number' && typeof x !== 'f
 
 /***/ }),
 
+/***/ 1293:
+/*!************************************************************!*\
+  !*** ./node_modules/rxjs/_esm2015/internal/util/isDate.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "isDate": () => (/* binding */ isDate)
+/* harmony export */ });
+function isDate(value) {
+    return value instanceof Date && !isNaN(+value);
+}
+
+
+/***/ }),
+
 /***/ 1900:
 /*!****************************************************************!*\
   !*** ./node_modules/rxjs/_esm2015/internal/util/isFunction.js ***!
@@ -20029,7 +22325,26 @@ function isIterable(input) {
 
 /***/ }),
 
-/***/ 6549:
+/***/ 7269:
+/*!***************************************************************!*\
+  !*** ./node_modules/rxjs/_esm2015/internal/util/isNumeric.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "isNumeric": () => (/* binding */ isNumeric)
+/* harmony export */ });
+/* harmony import */ var _isArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./isArray */ 4327);
+
+function isNumeric(val) {
+    return !(0,_isArray__WEBPACK_IMPORTED_MODULE_0__.isArray)(val) && (val - parseFloat(val) + 1) >= 0;
+}
+
+
+/***/ }),
+
+/***/ 5550:
 /*!**************************************************************!*\
   !*** ./node_modules/rxjs/_esm2015/internal/util/isObject.js ***!
   \**************************************************************/
@@ -20142,7 +22457,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _subscribeToObservable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./subscribeToObservable */ 1492);
 /* harmony import */ var _isArrayLike__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./isArrayLike */ 5122);
 /* harmony import */ var _isPromise__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./isPromise */ 5192);
-/* harmony import */ var _isObject__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./isObject */ 6549);
+/* harmony import */ var _isObject__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./isObject */ 5550);
 /* harmony import */ var _symbol_iterator__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../symbol/iterator */ 2803);
 /* harmony import */ var _symbol_observable__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../symbol/observable */ 6831);
 
@@ -99324,6 +101639,629 @@ const VERSION = new _angular_core__WEBPACK_IMPORTED_MODULE_0__.Version('13.2.7')
 /**
  * Generated bundle index. Do not edit.
  */
+
+
+
+/***/ }),
+
+/***/ 4933:
+/*!**************************************************************************!*\
+  !*** ./node_modules/@angular/service-worker/fesm2015/service-worker.mjs ***!
+  \**************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "ServiceWorkerModule": () => (/* binding */ ServiceWorkerModule),
+/* harmony export */   "SwPush": () => (/* binding */ SwPush),
+/* harmony export */   "SwRegistrationOptions": () => (/* binding */ SwRegistrationOptions),
+/* harmony export */   "SwUpdate": () => (/* binding */ SwUpdate)
+/* harmony export */ });
+/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! @angular/common */ 6362);
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! @angular/core */ 3184);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! rxjs */ 1635);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! rxjs */ 6587);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! rxjs */ 6312);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ 4139);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ 5828);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! rxjs */ 2218);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! rxjs */ 8130);
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! rxjs */ 8623);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! rxjs/operators */ 6942);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs/operators */ 9151);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! rxjs/operators */ 9095);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! rxjs/operators */ 9708);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! rxjs/operators */ 3910);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! rxjs/operators */ 8759);
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! rxjs/operators */ 5843);
+/**
+ * @license Angular v13.2.7
+ * (c) 2010-2022 Google LLC. https://angular.io/
+ * License: MIT
+ */
+
+
+
+
+
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+const ERR_SW_NOT_SUPPORTED = 'Service workers are disabled or not supported by this browser';
+
+function errorObservable(message) {
+  return (0,rxjs__WEBPACK_IMPORTED_MODULE_0__.defer)(() => (0,rxjs__WEBPACK_IMPORTED_MODULE_1__.throwError)(new Error(message)));
+}
+/**
+ * @publicApi
+ */
+
+
+class NgswCommChannel {
+  constructor(serviceWorker) {
+    this.serviceWorker = serviceWorker;
+
+    if (!serviceWorker) {
+      this.worker = this.events = this.registration = errorObservable(ERR_SW_NOT_SUPPORTED);
+    } else {
+      const controllerChangeEvents = (0,rxjs__WEBPACK_IMPORTED_MODULE_2__.fromEvent)(serviceWorker, 'controllerchange');
+      const controllerChanges = controllerChangeEvents.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.map)(() => serviceWorker.controller));
+      const currentController = (0,rxjs__WEBPACK_IMPORTED_MODULE_0__.defer)(() => (0,rxjs__WEBPACK_IMPORTED_MODULE_4__.of)(serviceWorker.controller));
+      const controllerWithChanges = (0,rxjs__WEBPACK_IMPORTED_MODULE_5__.concat)(currentController, controllerChanges);
+      this.worker = controllerWithChanges.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.filter)(c => !!c));
+      this.registration = this.worker.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_7__.switchMap)(() => serviceWorker.getRegistration()));
+      const rawEvents = (0,rxjs__WEBPACK_IMPORTED_MODULE_2__.fromEvent)(serviceWorker, 'message');
+      const rawEventPayload = rawEvents.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.map)(event => event.data));
+      const eventsUnconnected = rawEventPayload.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.filter)(event => event && event.type));
+      const events = eventsUnconnected.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_8__.publish)());
+      events.connect();
+      this.events = events;
+    }
+  }
+
+  postMessage(action, payload) {
+    return this.worker.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.take)(1), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_10__.tap)(sw => {
+      sw.postMessage(Object.assign({
+        action
+      }, payload));
+    })).toPromise().then(() => undefined);
+  }
+
+  postMessageWithOperation(type, payload, operationNonce) {
+    const waitForOperationCompleted = this.waitForOperationCompleted(operationNonce);
+    const postMessage = this.postMessage(type, payload);
+    return Promise.all([postMessage, waitForOperationCompleted]).then(([, result]) => result);
+  }
+
+  generateNonce() {
+    return Math.round(Math.random() * 10000000);
+  }
+
+  eventsOfType(type) {
+    let filterFn;
+
+    if (typeof type === 'string') {
+      filterFn = event => event.type === type;
+    } else {
+      filterFn = event => type.includes(event.type);
+    }
+
+    return this.events.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.filter)(filterFn));
+  }
+
+  nextEventOfType(type) {
+    return this.eventsOfType(type).pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.take)(1));
+  }
+
+  waitForOperationCompleted(nonce) {
+    return this.eventsOfType('OPERATION_COMPLETED').pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.filter)(event => event.nonce === nonce), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.take)(1), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.map)(event => {
+      if (event.result !== undefined) {
+        return event.result;
+      }
+
+      throw new Error(event.error);
+    })).toPromise();
+  }
+
+  get isEnabled() {
+    return !!this.serviceWorker;
+  }
+
+}
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+/**
+ * Subscribe and listen to
+ * [Web Push
+ * Notifications](https://developer.mozilla.org/en-US/docs/Web/API/Push_API/Best_Practices) through
+ * Angular Service Worker.
+ *
+ * @usageNotes
+ *
+ * You can inject a `SwPush` instance into any component or service
+ * as a dependency.
+ *
+ * <code-example path="service-worker/push/module.ts" region="inject-sw-push"
+ * header="app.component.ts"></code-example>
+ *
+ * To subscribe, call `SwPush.requestSubscription()`, which asks the user for permission.
+ * The call returns a `Promise` with a new
+ * [`PushSubscription`](https://developer.mozilla.org/en-US/docs/Web/API/PushSubscription)
+ * instance.
+ *
+ * <code-example path="service-worker/push/module.ts" region="subscribe-to-push"
+ * header="app.component.ts"></code-example>
+ *
+ * A request is rejected if the user denies permission, or if the browser
+ * blocks or does not support the Push API or ServiceWorkers.
+ * Check `SwPush.isEnabled` to confirm status.
+ *
+ * Invoke Push Notifications by pushing a message with the following payload.
+ *
+ * ```ts
+ * {
+ *   "notification": {
+ *     "actions": NotificationAction[],
+ *     "badge": USVString,
+ *     "body": DOMString,
+ *     "data": any,
+ *     "dir": "auto"|"ltr"|"rtl",
+ *     "icon": USVString,
+ *     "image": USVString,
+ *     "lang": DOMString,
+ *     "renotify": boolean,
+ *     "requireInteraction": boolean,
+ *     "silent": boolean,
+ *     "tag": DOMString,
+ *     "timestamp": DOMTimeStamp,
+ *     "title": DOMString,
+ *     "vibrate": number[]
+ *   }
+ * }
+ * ```
+ *
+ * Only `title` is required. See `Notification`
+ * [instance
+ * properties](https://developer.mozilla.org/en-US/docs/Web/API/Notification#Instance_properties).
+ *
+ * While the subscription is active, Service Worker listens for
+ * [PushEvent](https://developer.mozilla.org/en-US/docs/Web/API/PushEvent)
+ * occurrences and creates
+ * [Notification](https://developer.mozilla.org/en-US/docs/Web/API/Notification)
+ * instances in response.
+ *
+ * Unsubscribe using `SwPush.unsubscribe()`.
+ *
+ * An application can subscribe to `SwPush.notificationClicks` observable to be notified when a user
+ * clicks on a notification. For example:
+ *
+ * <code-example path="service-worker/push/module.ts" region="subscribe-to-notification-clicks"
+ * header="app.component.ts"></code-example>
+ *
+ * You can read more on handling notification clicks in the [Service worker notifications
+ * guide](guide/service-worker-notifications).
+ *
+ * @see [Push Notifications](https://developers.google.com/web/fundamentals/codelabs/push-notifications/)
+ * @see [Angular Push Notifications](https://blog.angular-university.io/angular-push-notifications/)
+ * @see [MDN: Push API](https://developer.mozilla.org/en-US/docs/Web/API/Push_API)
+ * @see [MDN: Notifications API](https://developer.mozilla.org/en-US/docs/Web/API/Notifications_API)
+ * @see [MDN: Web Push API Notifications best practices](https://developer.mozilla.org/en-US/docs/Web/API/Push_API/Best_Practices)
+ *
+ * @publicApi
+ */
+
+
+class SwPush {
+  constructor(sw) {
+    this.sw = sw;
+    this.subscriptionChanges = new rxjs__WEBPACK_IMPORTED_MODULE_11__.Subject();
+
+    if (!sw.isEnabled) {
+      this.messages = rxjs__WEBPACK_IMPORTED_MODULE_12__.NEVER;
+      this.notificationClicks = rxjs__WEBPACK_IMPORTED_MODULE_12__.NEVER;
+      this.subscription = rxjs__WEBPACK_IMPORTED_MODULE_12__.NEVER;
+      return;
+    }
+
+    this.messages = this.sw.eventsOfType('PUSH').pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.map)(message => message.data));
+    this.notificationClicks = this.sw.eventsOfType('NOTIFICATION_CLICK').pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.map)(message => message.data));
+    this.pushManager = this.sw.registration.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.map)(registration => registration.pushManager));
+    const workerDrivenSubscriptions = this.pushManager.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_7__.switchMap)(pm => pm.getSubscription()));
+    this.subscription = (0,rxjs__WEBPACK_IMPORTED_MODULE_13__.merge)(workerDrivenSubscriptions, this.subscriptionChanges);
+  }
+  /**
+   * True if the Service Worker is enabled (supported by the browser and enabled via
+   * `ServiceWorkerModule`).
+   */
+
+
+  get isEnabled() {
+    return this.sw.isEnabled;
+  }
+  /**
+   * Subscribes to Web Push Notifications,
+   * after requesting and receiving user permission.
+   *
+   * @param options An object containing the `serverPublicKey` string.
+   * @returns A Promise that resolves to the new subscription object.
+   */
+
+
+  requestSubscription(options) {
+    if (!this.sw.isEnabled) {
+      return Promise.reject(new Error(ERR_SW_NOT_SUPPORTED));
+    }
+
+    const pushOptions = {
+      userVisibleOnly: true
+    };
+    let key = this.decodeBase64(options.serverPublicKey.replace(/_/g, '/').replace(/-/g, '+'));
+    let applicationServerKey = new Uint8Array(new ArrayBuffer(key.length));
+
+    for (let i = 0; i < key.length; i++) {
+      applicationServerKey[i] = key.charCodeAt(i);
+    }
+
+    pushOptions.applicationServerKey = applicationServerKey;
+    return this.pushManager.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_7__.switchMap)(pm => pm.subscribe(pushOptions)), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.take)(1)).toPromise().then(sub => {
+      this.subscriptionChanges.next(sub);
+      return sub;
+    });
+  }
+  /**
+   * Unsubscribes from Service Worker push notifications.
+   *
+   * @returns A Promise that is resolved when the operation succeeds, or is rejected if there is no
+   *          active subscription or the unsubscribe operation fails.
+   */
+
+
+  unsubscribe() {
+    if (!this.sw.isEnabled) {
+      return Promise.reject(new Error(ERR_SW_NOT_SUPPORTED));
+    }
+
+    const doUnsubscribe = sub => {
+      if (sub === null) {
+        throw new Error('Not subscribed to push notifications.');
+      }
+
+      return sub.unsubscribe().then(success => {
+        if (!success) {
+          throw new Error('Unsubscribe failed!');
+        }
+
+        this.subscriptionChanges.next(null);
+      });
+    };
+
+    return this.subscription.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.take)(1), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_7__.switchMap)(doUnsubscribe)).toPromise();
+  }
+
+  decodeBase64(input) {
+    return atob(input);
+  }
+
+}
+
+SwPush.ɵfac = function SwPush_Factory(t) {
+  return new (t || SwPush)(_angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵinject"](NgswCommChannel));
+};
+
+SwPush.ɵprov = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵdefineInjectable"]({
+  token: SwPush,
+  factory: SwPush.ɵfac
+});
+
+(function () {
+  (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵsetClassMetadata"](SwPush, [{
+    type: _angular_core__WEBPACK_IMPORTED_MODULE_14__.Injectable
+  }], function () {
+    return [{
+      type: NgswCommChannel
+    }];
+  }, null);
+})();
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+/**
+ * Subscribe to update notifications from the Service Worker, trigger update
+ * checks, and forcibly activate updates.
+ *
+ * @see {@link guide/service-worker-communications Service worker communication guide}
+ *
+ * @publicApi
+ */
+
+
+class SwUpdate {
+  constructor(sw) {
+    this.sw = sw;
+
+    if (!sw.isEnabled) {
+      this.versionUpdates = rxjs__WEBPACK_IMPORTED_MODULE_12__.NEVER;
+      this.available = rxjs__WEBPACK_IMPORTED_MODULE_12__.NEVER;
+      this.activated = rxjs__WEBPACK_IMPORTED_MODULE_12__.NEVER;
+      this.unrecoverable = rxjs__WEBPACK_IMPORTED_MODULE_12__.NEVER;
+      return;
+    }
+
+    this.versionUpdates = this.sw.eventsOfType(['VERSION_DETECTED', 'VERSION_INSTALLATION_FAILED', 'VERSION_READY']);
+    this.available = this.versionUpdates.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.filter)(evt => evt.type === 'VERSION_READY'), (0,rxjs_operators__WEBPACK_IMPORTED_MODULE_3__.map)(evt => ({
+      type: 'UPDATE_AVAILABLE',
+      current: evt.currentVersion,
+      available: evt.latestVersion
+    })));
+    this.activated = this.sw.eventsOfType('UPDATE_ACTIVATED');
+    this.unrecoverable = this.sw.eventsOfType('UNRECOVERABLE_STATE');
+  }
+  /**
+   * True if the Service Worker is enabled (supported by the browser and enabled via
+   * `ServiceWorkerModule`).
+   */
+
+
+  get isEnabled() {
+    return this.sw.isEnabled;
+  }
+  /**
+   * Checks for an update and waits until the new version is downloaded from the server and ready
+   * for activation.
+   *
+   * @returns a promise that
+   * - resolves to `true` if a new version was found and is ready to be activated.
+   * - resolves to `false` if no new version was found
+   * - rejects if any error occurs
+   */
+
+
+  checkForUpdate() {
+    if (!this.sw.isEnabled) {
+      return Promise.reject(new Error(ERR_SW_NOT_SUPPORTED));
+    }
+
+    const nonce = this.sw.generateNonce();
+    return this.sw.postMessageWithOperation('CHECK_FOR_UPDATES', {
+      nonce
+    }, nonce);
+  }
+  /**
+   * Updates the current client (i.e. browser tab) to the latest version that is ready for
+   * activation.
+   *
+   * @returns a promise that
+   *  - resolves to `true` if an update was activated successfully
+   *  - resolves to `false` if no update was available (for example, the client was already on the
+   *    latest version).
+   *  - rejects if any error occurs
+   */
+
+
+  activateUpdate() {
+    if (!this.sw.isEnabled) {
+      return Promise.reject(new Error(ERR_SW_NOT_SUPPORTED));
+    }
+
+    const nonce = this.sw.generateNonce();
+    return this.sw.postMessageWithOperation('ACTIVATE_UPDATE', {
+      nonce
+    }, nonce);
+  }
+
+}
+
+SwUpdate.ɵfac = function SwUpdate_Factory(t) {
+  return new (t || SwUpdate)(_angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵinject"](NgswCommChannel));
+};
+
+SwUpdate.ɵprov = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵdefineInjectable"]({
+  token: SwUpdate,
+  factory: SwUpdate.ɵfac
+});
+
+(function () {
+  (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵsetClassMetadata"](SwUpdate, [{
+    type: _angular_core__WEBPACK_IMPORTED_MODULE_14__.Injectable
+  }], function () {
+    return [{
+      type: NgswCommChannel
+    }];
+  }, null);
+})();
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+/**
+ * Token that can be used to provide options for `ServiceWorkerModule` outside of
+ * `ServiceWorkerModule.register()`.
+ *
+ * You can use this token to define a provider that generates the registration options at runtime,
+ * for example via a function call:
+ *
+ * {@example service-worker/registration-options/module.ts region="registration-options"
+ *     header="app.module.ts"}
+ *
+ * @publicApi
+ */
+
+
+class SwRegistrationOptions {}
+
+const SCRIPT = new _angular_core__WEBPACK_IMPORTED_MODULE_14__.InjectionToken('NGSW_REGISTER_SCRIPT');
+
+function ngswAppInitializer(injector, script, options, platformId) {
+  const initializer = () => {
+    if (!((0,_angular_common__WEBPACK_IMPORTED_MODULE_15__.isPlatformBrowser)(platformId) && 'serviceWorker' in navigator && options.enabled !== false)) {
+      return;
+    } // Wait for service worker controller changes, and fire an INITIALIZE action when a new SW
+    // becomes active. This allows the SW to initialize itself even if there is no application
+    // traffic.
+
+
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (navigator.serviceWorker.controller !== null) {
+        navigator.serviceWorker.controller.postMessage({
+          action: 'INITIALIZE'
+        });
+      }
+    });
+    let readyToRegister$;
+
+    if (typeof options.registrationStrategy === 'function') {
+      readyToRegister$ = options.registrationStrategy();
+    } else {
+      const [strategy, ...args] = (options.registrationStrategy || 'registerWhenStable:30000').split(':');
+
+      switch (strategy) {
+        case 'registerImmediately':
+          readyToRegister$ = (0,rxjs__WEBPACK_IMPORTED_MODULE_4__.of)(null);
+          break;
+
+        case 'registerWithDelay':
+          readyToRegister$ = delayWithTimeout(+args[0] || 0);
+          break;
+
+        case 'registerWhenStable':
+          readyToRegister$ = !args[0] ? whenStable(injector) : (0,rxjs__WEBPACK_IMPORTED_MODULE_13__.merge)(whenStable(injector), delayWithTimeout(+args[0]));
+          break;
+
+        default:
+          // Unknown strategy.
+          throw new Error(`Unknown ServiceWorker registration strategy: ${options.registrationStrategy}`);
+      }
+    } // Don't return anything to avoid blocking the application until the SW is registered.
+    // Also, run outside the Angular zone to avoid preventing the app from stabilizing (especially
+    // given that some registration strategies wait for the app to stabilize).
+    // Catch and log the error if SW registration fails to avoid uncaught rejection warning.
+
+
+    const ngZone = injector.get(_angular_core__WEBPACK_IMPORTED_MODULE_14__.NgZone);
+    ngZone.runOutsideAngular(() => readyToRegister$.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_9__.take)(1)).subscribe(() => navigator.serviceWorker.register(script, {
+      scope: options.scope
+    }).catch(err => console.error('Service worker registration failed with:', err))));
+  };
+
+  return initializer;
+}
+
+function delayWithTimeout(timeout) {
+  return (0,rxjs__WEBPACK_IMPORTED_MODULE_4__.of)(null).pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_16__.delay)(timeout));
+}
+
+function whenStable(injector) {
+  const appRef = injector.get(_angular_core__WEBPACK_IMPORTED_MODULE_14__.ApplicationRef);
+  return appRef.isStable.pipe((0,rxjs_operators__WEBPACK_IMPORTED_MODULE_6__.filter)(stable => stable));
+}
+
+function ngswCommChannelFactory(opts, platformId) {
+  return new NgswCommChannel((0,_angular_common__WEBPACK_IMPORTED_MODULE_15__.isPlatformBrowser)(platformId) && opts.enabled !== false ? navigator.serviceWorker : undefined);
+}
+/**
+ * @publicApi
+ */
+
+
+class ServiceWorkerModule {
+  /**
+   * Register the given Angular Service Worker script.
+   *
+   * If `enabled` is set to `false` in the given options, the module will behave as if service
+   * workers are not supported by the browser, and the service worker will not be registered.
+   */
+  static register(script, opts = {}) {
+    return {
+      ngModule: ServiceWorkerModule,
+      providers: [{
+        provide: SCRIPT,
+        useValue: script
+      }, {
+        provide: SwRegistrationOptions,
+        useValue: opts
+      }, {
+        provide: NgswCommChannel,
+        useFactory: ngswCommChannelFactory,
+        deps: [SwRegistrationOptions, _angular_core__WEBPACK_IMPORTED_MODULE_14__.PLATFORM_ID]
+      }, {
+        provide: _angular_core__WEBPACK_IMPORTED_MODULE_14__.APP_INITIALIZER,
+        useFactory: ngswAppInitializer,
+        deps: [_angular_core__WEBPACK_IMPORTED_MODULE_14__.Injector, SCRIPT, SwRegistrationOptions, _angular_core__WEBPACK_IMPORTED_MODULE_14__.PLATFORM_ID],
+        multi: true
+      }]
+    };
+  }
+
+}
+
+ServiceWorkerModule.ɵfac = function ServiceWorkerModule_Factory(t) {
+  return new (t || ServiceWorkerModule)();
+};
+
+ServiceWorkerModule.ɵmod = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵdefineNgModule"]({
+  type: ServiceWorkerModule
+});
+ServiceWorkerModule.ɵinj = /* @__PURE__ */_angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵɵdefineInjector"]({
+  providers: [SwPush, SwUpdate]
+});
+
+(function () {
+  (typeof ngDevMode === "undefined" || ngDevMode) && _angular_core__WEBPACK_IMPORTED_MODULE_14__["ɵsetClassMetadata"](ServiceWorkerModule, [{
+    type: _angular_core__WEBPACK_IMPORTED_MODULE_14__.NgModule,
+    args: [{
+      providers: [SwPush, SwUpdate]
+    }]
+  }], null, null);
+})();
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+// This file only reexports content of the `src` folder. Keep it that way.
+
+/**
+ * @license
+ * Copyright Google LLC All Rights Reserved.
+ *
+ * Use of this source code is governed by an MIT-style license that can be
+ * found in the LICENSE file at https://angular.io/license
+ */
+
+/**
+ * Generated bundle index. Do not edit.
+ */
+
 
 
 
